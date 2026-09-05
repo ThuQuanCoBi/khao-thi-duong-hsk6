@@ -15,57 +15,42 @@
             --unanswered: #E2C2B3;
         }
         
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Noto Serif', serif;
-            margin: 0;
-            padding: 0;
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
-        }
-
-        .kaiti {
-            font-family: 'KaiTi', '楷体', STKaiti, serif;
-            font-size: 1.4rem;
-            line-height: 1.8;
-        }
-
+        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Noto Serif', serif; margin: 0; padding: 0; background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); }
+        .kaiti { font-family: 'KaiTi', '楷体', STKaiti, serif; font-size: 1.4rem; line-height: 1.8; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .header-title { text-align: center; font-family: 'Playfair Display', serif; color: var(--primary-color); border-bottom: 2px double var(--gold-color); padding-bottom: 10px; margin-bottom: 30px; }
         
-        .btn {
-            background-color: var(--primary-color); color: #fff; border: 2px solid var(--gold-color); padding: 10px 24px; font-family: 'Noto Serif', serif; font-size: 1rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-        }
+        .btn { background-color: var(--primary-color); color: #fff; border: 2px solid var(--gold-color); padding: 10px 24px; font-family: 'Noto Serif', serif; font-size: 1rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
         .btn:hover { background-color: #600000; }
-
         input[type="password"], input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--text-color); background-color: transparent; font-family: 'Noto Serif', serif; box-sizing: border-box; }
 
         .screen { display: none; }
         .active-screen { display: block; }
-
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
         .tab-btn { background: transparent; color: var(--text-color); }
         .tab-btn.active { background: var(--primary-color); color: #fff; }
         .tab-disabled { opacity: 0.5; pointer-events: none; position: relative; }
         .badge { position: absolute; top: -10px; right: -10px; background: red; color: white; font-size: 0.7rem; padding: 2px 5px; border-radius: 10px; }
 
-        .sticky-header {
-            position: sticky; top: 0; background-color: rgba(244, 239, 234, 0.95); border-bottom: 2px solid var(--gold-color); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 4px 6px -6px #222;
-        }
+        .sticky-header { position: sticky; top: 0; background-color: rgba(244, 239, 234, 0.95); border-bottom: 2px solid var(--gold-color); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 4px 6px -6px #222; }
         .timer { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
 
-        .section-instruction {
-            background-color: rgba(212, 175, 55, 0.2); border-left: 4px solid var(--primary-color); padding: 10px 15px; margin: 30px 0 15px 0; font-weight: bold;
-        }
-        .passage-box {
-            background-color: rgba(255,255,255,0.6); border: 1px dashed var(--text-color); padding: 20px; margin-bottom: 20px; text-align: justify;
-        }
-        .question-box { border: 1px solid var(--gold-color); padding: 15px; margin-bottom: 20px; background-color: rgba(255,255,255,0.4); }
+        .section-instruction { background-color: rgba(212, 175, 55, 0.2); border-left: 4px solid var(--primary-color); padding: 10px 15px; margin: 30px 0 15px 0; font-weight: bold; }
+        
+        /* Box hiển thị đoạn văn dùng chung */
+        .passage-box { background-color: rgba(255,255,255,0.7); border: 2px solid var(--text-color); padding: 20px; margin-bottom: 20px; text-align: justify; border-radius: 4px; }
+        
+        .question-box { border: 1px dashed var(--gold-color); padding: 15px; margin-bottom: 20px; background-color: rgba(255,255,255,0.4); }
         .options label { display: block; margin: 8px 0; cursor: pointer; }
 
-        /* Khung giấy kẻ ngang cho phần Viết */
+        /* Khung giấy dòng kẻ cho phần Viết */
         .manuscript-paper {
-            width: 100%; height: 500px; padding: 10px; font-size: 1.3rem; line-height: 40px; background-color: transparent; background-image: linear-gradient(transparent 39px, #D4AF37 40px); background-size: 100% 40px; border: 1px solid #D4AF37; font-family: 'KaiTi', '楷体', serif; resize: vertical; box-sizing: border-box; color: var(--text-color);
+            width: 100%; height: 500px; padding: 10px; font-size: 1.4rem; line-height: 40px; 
+            background-color: #fdfaf5; 
+            background-image: linear-gradient(transparent 39px, #D4AF37 40px); 
+            background-size: 100% 40px; 
+            border: 1px solid var(--text-color); 
+            font-family: 'KaiTi', '楷体', serif; resize: vertical; box-sizing: border-box; color: var(--text-color);
         }
         .manuscript-paper:focus { outline: none; border-color: var(--primary-color); }
 
@@ -83,6 +68,7 @@
 <div class="container">
     <h1 class="header-title">Tiếng Trung COBI - Thư Quán</h1>
 
+    <!-- Màn hình Đăng nhập -->
     <div id="login-screen" class="screen active-screen">
         <p style="text-align: center;">Mời nhập mật khẩu để bước vào Thư Quán.</p>
         <input type="password" id="passcode" placeholder="Nhập mật khẩu của bạn...">
@@ -90,6 +76,7 @@
         <p id="login-msg" style="color: red; text-align: center;"></p>
     </div>
 
+    <!-- Màn hình Chọn Đề -->
     <div id="dashboard-screen" class="screen">
         <div class="tabs">
             <button class="btn tab-btn active">Hệ 2.0</button>
@@ -99,15 +86,25 @@
         <div id="exam-list" class="loading">Đang tải danh sách đề...</div>
     </div>
 
+    <!-- Màn hình Đệm: Chống chặn Autoplay Audio -->
+    <div id="ready-screen" class="screen" style="text-align: center; margin-top: 50px;">
+        <h2 style="color: var(--primary-color);">Dữ liệu Đề thi đã tải xong!</h2>
+        <p>Vui lòng đeo tai nghe, chuẩn bị giấy nháp (nếu cần).</p>
+        <p>Audio sẽ bắt đầu phát ngay khi bạn bấm nút dưới đây.</p>
+        <button class="btn" style="font-size: 1.2rem; padding: 15px 30px; margin-top: 20px;" onclick="startExamReal()">Bắt đầu làm bài</button>
+    </div>
+
+    <!-- Màn hình Làm bài -->
     <div id="exam-screen" class="screen">
         <div class="sticky-header">
-            <div id="timer-display" class="timer">Đang tải Audio...</div>
+            <div id="timer-display" class="timer">Thời gian...</div>
             <button class="btn" onclick="forceNextSection()">Chuyển tiếp >></button>
         </div>
         <audio id="mainAudio"></audio>
         <div id="exam-content" class="kaiti"></div>
     </div>
 
+    <!-- Màn hình Rà soát -->
     <div id="review-screen" class="screen">
         <div class="sticky-header">
             <div id="review-timer" class="timer">Rà soát: 05:00</div>
@@ -118,6 +115,7 @@
         <div id="review-grid" class="grid-container"></div>
     </div>
 
+    <!-- Màn hình Kết quả -->
     <div id="result-screen" class="screen" style="text-align: center;">
         <h2>Khảo hạch hoàn tất!</h2>
         <p>Điểm Nghe: <span id="res-nghe" style="font-weight:bold; color:var(--primary-color)"></span>/100</p>
@@ -132,7 +130,9 @@
 
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbwtNYUv_5tta2BFmcsQqNiG7lUZdX0aZSHQr4TN4QhHmKRAtoyytaY6yTHsCeagSCAyBQ/exec';
-    const GITHUB_AUDIO_BASE_URL = 'https://raw.githubusercontent.com/TEN_GITHUB/REPO_AUDIO/main/';
+    
+    // ĐIỀN LINK FOLDER AUDIO CỦA BẠN VÀO ĐÂY (Nhớ có dấu / ở cuối)
+    const GITHUB_AUDIO_BASE_URL = 'https://raw.githubusercontent.com/TEN_GITHUB/REPO_CUA_BAN/main/audio/';
 
     const HEADINGS = {
         1: "第1-15题：请选出与所听内容一致的一项。",
@@ -179,6 +179,7 @@
         });
     }
 
+    // Khi chọn đề, kéo dữ liệu xong sẽ nhảy sang màn hình "Ready"
     function fetchExamData(examName) {
         currentExamName = examName;
         document.getElementById('exam-list').innerHTML = "Đang kéo dữ liệu đề thi...";
@@ -186,37 +187,48 @@
         .then(res => res.json())
         .then(data => {
             buildExamHTML(data.data);
-            switchScreen('exam-screen');
-            startSectionNghe();
+            
+            // Gán source Audio trước, dùng encodeURIComponent để link web hiểu được chữ tiếng Việt có dấu
+            let audio = document.getElementById('mainAudio');
+            audio.src = GITHUB_AUDIO_BASE_URL + encodeURIComponent(currentExamName) + ".mp3";
+            audio.load();
+
+            switchScreen('ready-screen');
         });
     }
 
+    // Xây dựng khung HTML
     function buildExamHTML(data) {
         let html = "";
         data.forEach(row => {
             let sttRaw = String(row.stt).trim();
             if(!sttRaw) return;
 
-            // Xử lý tiêu đề nhóm câu hỏi
             let sttNum = parseInt(sttRaw);
+            
+            // 1. In Tiêu đề hướng dẫn (nếu có)
             if (HEADINGS[sttNum]) {
                 let secClass = sttNum <= 50 ? 'sec-nghe' : 'sec-doc';
                 html += `<div class="section-instruction ${secClass}" style="display:none;">${HEADINGS[sttNum]}</div>`;
             }
 
-            // Xử lý các đoạn văn dùng chung (stt chứa dấu gạch ngang, vd: 71-75)
+            // 2. Xử lý ĐOẠN VĂN DÙNG CHUNG (ví dụ: "71-75" hoặc "81-84")
             if (sttRaw.includes("-")) {
-                let secClass = parseInt(sttRaw.split("-")[0]) <= 50 ? 'sec-nghe' : 'sec-doc';
-                html += `<div class="passage-box ${secClass}" style="display:none;">${row.cauHoi}</div>`;
+                let isNghe = parseInt(sttRaw.split("-")[0]) <= 50;
+                let secClass = isNghe ? 'sec-nghe' : 'sec-doc';
+                html += `<div class="passage-box ${secClass}" style="display:none;">
+                            <b style="color:var(--primary-color);">【阅读材料 ${sttRaw}】</b><br><br>
+                            ${row.cauHoi}
+                         </div>`;
                 return;
             }
 
-            // Xử lý câu 101 (Viết) chia làm 2 phase
+            // 3. Xử lý câu 101 (Viết) chia 2 giai đoạn: Đọc 10p, Viết 35p
             if (sttNum === 101) {
                 html += `<div id="q-101" class="sec-viet" style="display:none;">`;
                 html += `<div id="viet-phase-1">
-                            <h3 style="color:red; text-align:center;">阅读材料 (10分钟) - 10 phút đọc đề</h3>
-                            <p><i>Lưu ý: Hết 10 phút, đoạn văn sẽ bị thu lại. Bạn không được chép nháp.</i></p>
+                            <h3 style="color:red; text-align:center;">阅读材料 (10分钟) - 10 phút ghi nhớ</h3>
+                            <p style="text-align:center;"><i>Lưu ý: Hết 10 phút, đoạn văn sẽ biến mất. Bạn không được dùng giấy nháp.</i></p>
                             <div class="passage-box">${row.cauHoi}</div>
                          </div>`;
                 html += `<div id="viet-phase-2" style="display:none;">
@@ -227,11 +239,11 @@
                 return;
             }
 
-            // Xử lý câu hỏi trắc nghiệm thông thường
+            // 4. Xử lý câu hỏi trắc nghiệm bình thường
             let secClass = (sttNum <= 50) ? 'sec-nghe' : 'sec-doc';
             html += `<div id="q-${sttNum}" class="question-box ${secClass}" style="display:none;">`;
             
-            // Khung hiển thị câu hỏi (Ẩn nội dung đối với câu 51-60)
+            // Từ 51-60 chỉ hiện đáp án ABCD (ẩn nội dung câu hỏi đi)
             if (sttNum >= 51 && sttNum <= 60) {
                 html += `<b>第 ${sttNum} 题:</b><br><br>`;
             } else {
@@ -249,18 +261,28 @@
         document.getElementById('exam-content').innerHTML = html;
     }
 
+    // Bắt đầu thi (Đã có tương tác chuột của User -> Audio sẽ AutoPlay)
+    function startExamReal() {
+        switchScreen('exam-screen');
+        startSectionNghe();
+    }
+
+    // Luồng: Phần Nghe
     function startSectionNghe() {
         currentSection = 'nghe';
         document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'block');
+        
         let audio = document.getElementById('mainAudio');
-        audio.src = GITHUB_AUDIO_BASE_URL + currentExamName + ".mp3";
         document.getElementById('timer-display').innerText = "Phần Nghe đang phát...";
-        audio.play().catch(e => {
-            document.getElementById('timer-display').innerHTML = `<button onclick="document.getElementById('mainAudio').play(); this.style.display='none';">Bấm để phát Audio</button>`;
-        });
+        
+        // Phát âm thanh
+        audio.play();
+        
+        // Hết Audio tự chuyển sang phần Đọc
         audio.onended = function() { forceNextSection(); };
     }
 
+    // Luồng: Phần Đọc
     function startSectionDoc() {
         currentSection = 'doc';
         document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'none');
@@ -268,22 +290,28 @@
         startTimer(50 * 60, document.getElementById('timer-display'), "Đọc: ");
     }
 
+    // Luồng: Phần Viết - Giai đoạn ĐỌC (10 phút)
     function startSectionVietDoc() {
         currentSection = 'viet-doc';
         document.querySelectorAll('.sec-doc').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.sec-viet').forEach(el => el.style.display = 'block');
+        
         document.getElementById('viet-phase-1').style.display = 'block';
         document.getElementById('viet-phase-2').style.display = 'none';
-        startTimer(10 * 60, document.getElementById('timer-display'), "Đọc tài liệu: ");
+        
+        startTimer(10 * 60, document.getElementById('timer-display'), "Ghi nhớ đề: ");
     }
 
+    // Luồng: Phần Viết - Giai đoạn VIẾT (35 phút)
     function startSectionVietViet() {
         currentSection = 'viet-viet';
-        document.getElementById('viet-phase-1').style.display = 'none';
-        document.getElementById('viet-phase-2').style.display = 'block';
+        document.getElementById('viet-phase-1').style.display = 'none'; // Ẩn đoạn văn
+        document.getElementById('viet-phase-2').style.display = 'block'; // Hiện giấy kẻ ngang
+        
         startTimer(35 * 60, document.getElementById('timer-display'), "Viết bài: ");
     }
 
+    // Luồng: Rà soát (5 phút)
     function startSectionRaSoat() {
         currentSection = 'rasoat';
         switchScreen('review-screen');
@@ -291,6 +319,7 @@
         startTimer(5 * 60, document.getElementById('review-timer'), "Rà soát: ");
     }
 
+    // Nút điều hướng các phần
     function forceNextSection() {
         clearInterval(timerInterval);
         if (currentSection === 'nghe') {
@@ -306,6 +335,7 @@
         }
     }
 
+    // Bộ đếm thời gian
     function startTimer(seconds, displayElement, prefix) {
         timeRemaining = seconds;
         updateTimerUI(displayElement, prefix);
@@ -325,6 +355,7 @@
         el.innerText = prefix + m + ":" + s;
     }
 
+    // Bảng 100 ô rà soát
     function buildReviewGrid() {
         let html = "";
         for (let i = 1; i <= 100; i++) {
@@ -335,6 +366,7 @@
         document.getElementById('review-grid').innerHTML = html;
     }
 
+    // Nhảy về câu hỏi cụ thể
     function jumpToQuestion(stt) {
         switchScreen('exam-screen');
         document.querySelectorAll('.sec-nghe, .sec-doc, .sec-viet').forEach(el => el.style.display = 'none');
@@ -354,6 +386,7 @@
         switchScreen('review-screen');
     }
 
+    // Nộp bài về Google Sheets
     function submitFinalExam() {
         clearInterval(timerInterval);
         document.getElementById('review-screen').innerHTML = "<h2 style='text-align:center;'>Đang nộp bài thi. Lão sư chờ một lát...</h2>";
