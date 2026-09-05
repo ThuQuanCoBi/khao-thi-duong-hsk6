@@ -20,15 +20,7 @@
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         .header-title { text-align: center; font-family: 'Playfair Display', serif; color: var(--primary-color); border-bottom: 2px double var(--gold-color); padding-bottom: 10px; margin-bottom: 30px; }
 
-        <!-- Header -->
-        
-        <header class="w-full max-w-5xl flex flex-col items-center mb-10 relative">
-    <img src="https://raw.githubusercontent.com/thuquanhanngucobi/cobi-du-lac-hien/refs/heads/main/denlong.png" alt="Đèn lồng" class="absolute left-0 top-0 h-28 md:h-36 lantern hidden sm:block">
-    <img src="https://raw.githubusercontent.com/thuquanhanngucobi/cobi-du-lac-hien/refs/heads/main/denlong.png" alt="Đèn lồng" class="absolute right-0 top-0 h-28 md:h-36 lantern hidden sm:block">
-    <img src="https://raw.githubusercontent.com/thuquanhanngucobi/cobi-du-lac-hien/refs/heads/main/LOGO%20NEW.png" alt="Hán Ngữ CoBi Logo" class="h-28 md:h-32 mb-4 drop-shadow-md">
-    <h1 class="text-3xl md:text-5xl font-bold text-center tracking-wide text-[#5c3d2e]">CoBi Du Lạc Hiên (游乐轩)</h1>
-    <p id="main-subtitle" class="text-lg md:text-xl italic mt-2 text-center text-[#7f5539]">"Tự do dạo chơi – Ngàn từ tự đến."</p>
-  </header>
+      
         .btn { background-color: var(--primary-color); color: #fff; border: 2px solid var(--gold-color); padding: 10px 24px; font-family: 'Noto Serif', serif; font-size: 1rem; cursor: pointer; transition: all 0.3s; border-radius: 20px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
         .btn:hover { background-color: #600000; }
         input[type="password"], input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--text-color); background-color: transparent; font-family: 'Noto Serif', serif; box-sizing: border-box; }
@@ -136,7 +128,17 @@
 
     <button id="btn-back-review" class="btn" onclick="backToReview()">Quay lại Rà soát</button>
 </div>
-
+ 
+    <!-- Header -->
+        
+        <header class="w-full max-w-5xl flex flex-col items-center mb-10 relative">
+    <img src="https://raw.githubusercontent.com/thuquanhanngucobi/cobi-du-lac-hien/refs/heads/main/denlong.png" alt="Đèn lồng" class="absolute left-0 top-0 h-28 md:h-36 lantern hidden sm:block">
+    <img src="https://raw.githubusercontent.com/thuquanhanngucobi/cobi-du-lac-hien/refs/heads/main/denlong.png" alt="Đèn lồng" class="absolute right-0 top-0 h-28 md:h-36 lantern hidden sm:block">
+    <img src="https://raw.githubusercontent.com/thuquanhanngucobi/cobi-du-lac-hien/refs/heads/main/LOGO%20NEW.png" alt="Hán Ngữ CoBi Logo" class="h-28 md:h-32 mb-4 drop-shadow-md">
+    <h1 class="text-3xl md:text-5xl font-bold text-center tracking-wide text-[#5c3d2e]">CoBi Du Lạc Hiên (游乐轩)</h1>
+    <p id="main-subtitle" class="text-lg md:text-xl italic mt-2 text-center text-[#7f5539]">"Tự do dạo chơi – Ngàn từ tự đến."</p>
+  </header>
+    
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbwtNYUv_5tta2BFmcsQqNiG7lUZdX0aZSHQr4TN4QhHmKRAtoyytaY6yTHsCeagSCAyBQ/exec';
     
