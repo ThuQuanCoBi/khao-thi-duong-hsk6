@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luyện đề HSK 6 - Thư Quán Hán Ngữ COBI</title>
+    <title>Luyện đề HSK 6 - Tiếng Trung COBI</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Phong cách Cổ Phong - Thư Quán */
         :root {
             --bg-color: #F4EFEA;
             --text-color: #3E2723;
@@ -22,120 +21,60 @@
             font-family: 'Noto Serif', serif;
             margin: 0;
             padding: 0;
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); /* Vân giấy mờ */
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
         }
 
         .kaiti {
             font-family: 'KaiTi', '楷体', STKaiti, serif;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             line-height: 1.8;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header-title {
-            text-align: center;
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-color);
-            border-bottom: 2px double var(--gold-color);
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-        }
-
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header-title { text-align: center; font-family: 'Playfair Display', serif; color: var(--primary-color); border-bottom: 2px double var(--gold-color); padding-bottom: 10px; margin-bottom: 30px; }
+        
         .btn {
-            background-color: var(--primary-color);
-            color: #fff;
-            border: 2px solid var(--gold-color);
-            padding: 10px 24px;
-            font-family: 'Noto Serif', serif;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 4px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            background-color: var(--primary-color); color: #fff; border: 2px solid var(--gold-color); padding: 10px 24px; font-family: 'Noto Serif', serif; font-size: 1rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
         }
-
         .btn:hover { background-color: #600000; }
-        .btn:disabled { background-color: #aaa; border-color: #888; cursor: not-allowed; }
 
-        input[type="password"], input[type="text"], textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid var(--text-color);
-            background-color: transparent;
-            font-family: 'Noto Serif', serif;
-            box-sizing: border-box;
-        }
+        input[type="password"], input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--text-color); background-color: transparent; font-family: 'Noto Serif', serif; box-sizing: border-box; }
 
-        /* Khung hiển thị */
         .screen { display: none; }
         .active-screen { display: block; }
 
-        /* Tabs */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
         .tab-btn { background: transparent; color: var(--text-color); }
         .tab-btn.active { background: var(--primary-color); color: #fff; }
         .tab-disabled { opacity: 0.5; pointer-events: none; position: relative; }
         .badge { position: absolute; top: -10px; right: -10px; background: red; color: white; font-size: 0.7rem; padding: 2px 5px; border-radius: 10px; }
 
-        /* Sticky Header (Timer) */
         .sticky-header {
-            position: sticky;
-            top: 0;
-            background-color: rgba(244, 239, 234, 0.95);
-            border-bottom: 2px solid var(--gold-color);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            box-shadow: 0 4px 6px -6px #222;
+            position: sticky; top: 0; background-color: rgba(244, 239, 234, 0.95); border-bottom: 2px solid var(--gold-color); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 4px 6px -6px #222;
         }
-
         .timer { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
 
-        /* Câu hỏi */
-        .question-box {
-            border: 1px solid var(--gold-color);
-            padding: 15px;
-            margin-bottom: 20px;
-            background-color: rgba(255,255,255,0.4);
+        .section-instruction {
+            background-color: rgba(212, 175, 55, 0.2); border-left: 4px solid var(--primary-color); padding: 10px 15px; margin: 30px 0 15px 0; font-weight: bold;
         }
-
+        .passage-box {
+            background-color: rgba(255,255,255,0.6); border: 1px dashed var(--text-color); padding: 20px; margin-bottom: 20px; text-align: justify;
+        }
+        .question-box { border: 1px solid var(--gold-color); padding: 15px; margin-bottom: 20px; background-color: rgba(255,255,255,0.4); }
         .options label { display: block; margin: 8px 0; cursor: pointer; }
 
-        /* Bảng rà soát */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 8px;
-            margin: 20px 0;
+        /* Khung giấy kẻ ngang cho phần Viết */
+        .manuscript-paper {
+            width: 100%; height: 500px; padding: 10px; font-size: 1.3rem; line-height: 40px; background-color: transparent; background-image: linear-gradient(transparent 39px, #D4AF37 40px); background-size: 100% 40px; border: 1px solid #D4AF37; font-family: 'KaiTi', '楷体', serif; resize: vertical; box-sizing: border-box; color: var(--text-color);
         }
-        .grid-item {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--text-color);
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .manuscript-paper:focus { outline: none; border-color: var(--primary-color); }
+
+        .grid-container { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin: 20px 0; }
+        .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid var(--text-color); cursor: pointer; font-weight: bold; }
         .ans-true { background-color: var(--answered); color: #fff; }
         .ans-false { background-color: var(--unanswered); color: var(--text-color); }
 
-        #btn-back-review {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: none;
-            z-index: 101;
-        }
-        
+        #btn-back-review { position: fixed; bottom: 20px; right: 20px; display: none; z-index: 101; }
         .loading { text-align: center; font-style: italic; color: #666; }
     </style>
 </head>
@@ -144,40 +83,31 @@
 <div class="container">
     <h1 class="header-title">Tiếng Trung COBI - Thư Quán</h1>
 
-    <!-- MÀN HÌNH 1: ĐĂNG NHẬP -->
     <div id="login-screen" class="screen active-screen">
-        <p style="text-align: center;">Mời nhập mật khâu để bước vào Thư Quán.</p>
+        <p style="text-align: center;">Mời nhập mật khẩu để bước vào Thư Quán.</p>
         <input type="password" id="passcode" placeholder="Nhập mật khẩu của bạn...">
         <button class="btn" style="width: 100%;" onclick="login()">Tiến Nhập</button>
         <p id="login-msg" style="color: red; text-align: center;"></p>
     </div>
 
-    <!-- MÀN HÌNH 2: CHỌN ĐỀ -->
     <div id="dashboard-screen" class="screen">
         <div class="tabs">
             <button class="btn tab-btn active">Hệ 2.0</button>
-            <button class="btn tab-btn tab-disabled">
-                Hệ 3.0 <span class="badge">Sắp ra mắt</span>
-            </button>
+            <button class="btn tab-btn tab-disabled">Hệ 3.0 <span class="badge">Sắp ra mắt</span></button>
         </div>
         <h3>Danh sách Đề thi:</h3>
         <div id="exam-list" class="loading">Đang tải danh sách đề...</div>
     </div>
 
-    <!-- MÀN HÌNH 3: LÀM BÀI -->
     <div id="exam-screen" class="screen">
         <div class="sticky-header">
             <div id="timer-display" class="timer">Đang tải Audio...</div>
-            <button class="btn" onclick="forceNextSection()">Chuyển phần sau >></button>
+            <button class="btn" onclick="forceNextSection()">Chuyển tiếp >></button>
         </div>
-        
-        <!-- Audio ẩn -->
         <audio id="mainAudio"></audio>
-        
         <div id="exam-content" class="kaiti"></div>
     </div>
 
-    <!-- MÀN HÌNH 4: RÀ SOÁT -->
     <div id="review-screen" class="screen">
         <div class="sticky-header">
             <div id="review-timer" class="timer">Rà soát: 05:00</div>
@@ -188,7 +118,6 @@
         <div id="review-grid" class="grid-container"></div>
     </div>
 
-    <!-- MÀN HÌNH 5: KẾT QUẢ -->
     <div id="result-screen" class="screen" style="text-align: center;">
         <h2>Khảo hạch hoàn tất!</h2>
         <p>Điểm Nghe: <span id="res-nghe" style="font-weight:bold; color:var(--primary-color)"></span>/100</p>
@@ -202,58 +131,44 @@
 </div>
 
 <script>
-    // --- CẤU HÌNH API ---
     const API_URL = 'https://script.google.com/macros/s/AKfycbwtNYUv_5tta2BFmcsQqNiG7lUZdX0aZSHQr4TN4QhHmKRAtoyytaY6yTHsCeagSCAyBQ/exec';
-    
-    // ĐIỀN LINK GITHUB CHỨA AUDIO CỦA BẠN VÀO ĐÂY:
     const GITHUB_AUDIO_BASE_URL = 'https://raw.githubusercontent.com/TEN_GITHUB/REPO_AUDIO/main/';
 
-    // --- BIẾN TOÀN CỤC ---
-    let studentName = "";
-    let currentExamName = "";
-    let currentSection = ""; // 'nghe', 'doc', 'viet', 'rasoat'
-    let timerInterval;
-    let timeRemaining = 0;
+    const HEADINGS = {
+        1: "第1-15题：请选出与所听内容一致的一项。",
+        16: "第16-30题：请选出正确答案。",
+        31: "第31-50题：请选出正确答案。",
+        51: "第51-60题：请选出有语病的一项。",
+        61: "第61-70题：选词填空。",
+        71: "第71-80题：选句填空。",
+        81: "第81-100题：请选出正确答案。"
+    };
+
+    let studentName = "", currentExamName = "", currentSection = "";
+    let timerInterval, timeRemaining = 0;
     
-    // --- DEVICE ID ---
     function getDeviceId() {
         let id = localStorage.getItem('cobi_device_id');
-        if (!id) {
-            id = 'COBI-' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('cobi_device_id', id);
-        }
+        if (!id) { id = 'COBI-' + Math.random().toString(36).substr(2, 9); localStorage.setItem('cobi_device_id', id); }
         return id;
     }
 
-    // --- LUỒNG ĐĂNG NHẬP ---
     function login() {
         const pass = document.getElementById('passcode').value;
         const msg = document.getElementById('login-msg');
         if(!pass) { msg.innerText = "Chưa nhập mật khẩu!"; return; }
         
         msg.innerText = "Đang xác thực...";
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'login', password: pass, deviceId: getDeviceId() })
-        })
+        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'login', password: pass, deviceId: getDeviceId() }) })
         .then(res => res.json())
         .then(data => {
-            if(data.success) {
-                studentName = data.name;
-                switchScreen('dashboard-screen');
-                loadExams();
-            } else {
-                msg.innerText = data.message;
-            }
+            if(data.success) { studentName = data.name; switchScreen('dashboard-screen'); loadExams(); } 
+            else { msg.innerText = data.message; }
         });
     }
 
-    // --- TẢI DANH SÁCH ĐỀ ---
     function loadExams() {
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'getExamList' })
-        })
+        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getExamList' }) })
         .then(res => res.json())
         .then(data => {
             let html = "";
@@ -264,14 +179,10 @@
         });
     }
 
-    // --- TẢI DỮ LIỆU 1 ĐỀ CỤ THỂ ---
     function fetchExamData(examName) {
         currentExamName = examName;
         document.getElementById('exam-list').innerHTML = "Đang kéo dữ liệu đề thi...";
-        fetch(API_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action: 'getExamData', examName: examName })
-        })
+        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getExamData', examName: examName }) })
         .then(res => res.json())
         .then(data => {
             buildExamHTML(data.data);
@@ -280,54 +191,76 @@
         });
     }
 
-    // --- XÂY DỰNG GIAO DIỆN CÂU HỎI ---
     function buildExamHTML(data) {
         let html = "";
         data.forEach(row => {
-            let stt = row.stt;
-            if(!stt) return;
-            
-            // Chia div theo phần để dễ ẩn hiện
-            let secClass = (stt <= 50) ? 'sec-nghe' : (stt <= 100) ? 'sec-doc' : 'sec-viet';
-            
-            html += `<div id="q-${stt}" class="question-box ${secClass}" style="display:none;">`;
-            html += `<b>Câu ${stt}:</b> ${row.cauHoi}<br><br>`;
-            
-            if (stt <= 100) {
-                // Trắc nghiệm
-                ['a', 'b', 'c', 'd'].forEach(opt => {
-                    if (row[opt]) {
-                        let optUpper = opt.toUpperCase();
-                        html += `<div class="options"><label><input type="radio" name="ans-${stt}" value="${optUpper}"> ${optUpper}. ${row[opt]}</label></div>`;
-                    }
-                });
-            } else {
-                // Viết câu 101
-                html += `<textarea id="ans-101" rows="10" placeholder="Gõ bài tóm tắt của bạn vào đây..."></textarea>`;
+            let sttRaw = String(row.stt).trim();
+            if(!sttRaw) return;
+
+            // Xử lý tiêu đề nhóm câu hỏi
+            let sttNum = parseInt(sttRaw);
+            if (HEADINGS[sttNum]) {
+                let secClass = sttNum <= 50 ? 'sec-nghe' : 'sec-doc';
+                html += `<div class="section-instruction ${secClass}" style="display:none;">${HEADINGS[sttNum]}</div>`;
             }
+
+            // Xử lý các đoạn văn dùng chung (stt chứa dấu gạch ngang, vd: 71-75)
+            if (sttRaw.includes("-")) {
+                let secClass = parseInt(sttRaw.split("-")[0]) <= 50 ? 'sec-nghe' : 'sec-doc';
+                html += `<div class="passage-box ${secClass}" style="display:none;">${row.cauHoi}</div>`;
+                return;
+            }
+
+            // Xử lý câu 101 (Viết) chia làm 2 phase
+            if (sttNum === 101) {
+                html += `<div id="q-101" class="sec-viet" style="display:none;">`;
+                html += `<div id="viet-phase-1">
+                            <h3 style="color:red; text-align:center;">阅读材料 (10分钟) - 10 phút đọc đề</h3>
+                            <p><i>Lưu ý: Hết 10 phút, đoạn văn sẽ bị thu lại. Bạn không được chép nháp.</i></p>
+                            <div class="passage-box">${row.cauHoi}</div>
+                         </div>`;
+                html += `<div id="viet-phase-2" style="display:none;">
+                            <h3 style="color:red; text-align:center;">写作 (35分钟) - 35 phút gõ bài</h3>
+                            <textarea id="ans-101" class="manuscript-paper" placeholder="Nhập bài tóm tắt của bạn vào đây..."></textarea>
+                         </div>`;
+                html += `</div>`;
+                return;
+            }
+
+            // Xử lý câu hỏi trắc nghiệm thông thường
+            let secClass = (sttNum <= 50) ? 'sec-nghe' : 'sec-doc';
+            html += `<div id="q-${sttNum}" class="question-box ${secClass}" style="display:none;">`;
+            
+            // Khung hiển thị câu hỏi (Ẩn nội dung đối với câu 51-60)
+            if (sttNum >= 51 && sttNum <= 60) {
+                html += `<b>第 ${sttNum} 题:</b><br><br>`;
+            } else {
+                html += `<b>第 ${sttNum} 题:</b> ${row.cauHoi}<br><br>`;
+            }
+
+            ['a', 'b', 'c', 'd'].forEach(opt => {
+                if (row[opt]) {
+                    let optUpper = opt.toUpperCase();
+                    html += `<div class="options"><label><input type="radio" name="ans-${sttNum}" value="${optUpper}"> ${optUpper}. ${row[opt]}</label></div>`;
+                }
+            });
             html += `</div>`;
         });
         document.getElementById('exam-content').innerHTML = html;
     }
 
-    // --- LUỒNG THI: NGHE ---
     function startSectionNghe() {
         currentSection = 'nghe';
         document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'block');
-        
         let audio = document.getElementById('mainAudio');
         audio.src = GITHUB_AUDIO_BASE_URL + currentExamName + ".mp3";
-        
         document.getElementById('timer-display').innerText = "Phần Nghe đang phát...";
         audio.play().catch(e => {
-            // Xử lý lỗi autoplay của trình duyệt
             document.getElementById('timer-display').innerHTML = `<button onclick="document.getElementById('mainAudio').play(); this.style.display='none';">Bấm để phát Audio</button>`;
         });
-        
         audio.onended = function() { forceNextSection(); };
     }
 
-    // --- LUỒNG THI: ĐỌC ---
     function startSectionDoc() {
         currentSection = 'doc';
         document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'none');
@@ -335,15 +268,22 @@
         startTimer(50 * 60, document.getElementById('timer-display'), "Đọc: ");
     }
 
-    // --- LUỒNG THI: VIẾT ---
-    function startSectionViet() {
-        currentSection = 'viet';
+    function startSectionVietDoc() {
+        currentSection = 'viet-doc';
         document.querySelectorAll('.sec-doc').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.sec-viet').forEach(el => el.style.display = 'block');
-        startTimer(45 * 60, document.getElementById('timer-display'), "Viết: ");
+        document.getElementById('viet-phase-1').style.display = 'block';
+        document.getElementById('viet-phase-2').style.display = 'none';
+        startTimer(10 * 60, document.getElementById('timer-display'), "Đọc tài liệu: ");
     }
 
-    // --- LUỒNG THI: RÀ SOÁT ---
+    function startSectionVietViet() {
+        currentSection = 'viet-viet';
+        document.getElementById('viet-phase-1').style.display = 'none';
+        document.getElementById('viet-phase-2').style.display = 'block';
+        startTimer(35 * 60, document.getElementById('timer-display'), "Viết bài: ");
+    }
+
     function startSectionRaSoat() {
         currentSection = 'rasoat';
         switchScreen('review-screen');
@@ -351,26 +291,24 @@
         startTimer(5 * 60, document.getElementById('review-timer'), "Rà soát: ");
     }
 
-    // --- ĐIỀU HƯỚNG CÁC PHẦN ---
     function forceNextSection() {
         clearInterval(timerInterval);
         if (currentSection === 'nghe') {
-            document.getElementById('mainAudio').pause();
-            startSectionDoc();
+            document.getElementById('mainAudio').pause(); startSectionDoc();
         } else if (currentSection === 'doc') {
-            startSectionViet();
-        } else if (currentSection === 'viet') {
+            startSectionVietDoc();
+        } else if (currentSection === 'viet-doc') {
+            startSectionVietViet();
+        } else if (currentSection === 'viet-viet') {
             startSectionRaSoat();
         } else if (currentSection === 'rasoat') {
             submitFinalExam();
         }
     }
 
-    // --- HỆ THỐNG TIMER ---
     function startTimer(seconds, displayElement, prefix) {
         timeRemaining = seconds;
         updateTimerUI(displayElement, prefix);
-        
         timerInterval = setInterval(() => {
             timeRemaining--;
             updateTimerUI(displayElement, prefix);
@@ -387,7 +325,6 @@
         el.innerText = prefix + m + ":" + s;
     }
 
-    // --- BẢNG RÀ SOÁT ---
     function buildReviewGrid() {
         let html = "";
         for (let i = 1; i <= 100; i++) {
@@ -400,27 +337,27 @@
 
     function jumpToQuestion(stt) {
         switchScreen('exam-screen');
-        // Ẩn tất cả, chỉ hiện phần chứa câu hỏi đó
         document.querySelectorAll('.sec-nghe, .sec-doc, .sec-viet').forEach(el => el.style.display = 'none');
         let secClass = (stt <= 50) ? 'sec-nghe' : 'sec-doc';
         document.querySelectorAll('.' + secClass).forEach(el => el.style.display = 'block');
         
-        document.getElementById('q-' + stt).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        let qElement = document.getElementById('q-' + stt);
+        if (qElement) {
+            qElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
         document.getElementById('btn-back-review').style.display = 'block';
     }
 
     function backToReview() {
         document.getElementById('btn-back-review').style.display = 'none';
-        buildReviewGrid(); // Cập nhật lại màu sắc
+        buildReviewGrid();
         switchScreen('review-screen');
     }
 
-    // --- NỘP BÀI ---
     function submitFinalExam() {
         clearInterval(timerInterval);
         document.getElementById('review-screen').innerHTML = "<h2 style='text-align:center;'>Đang nộp bài thi. Lão sư chờ một lát...</h2>";
         
-        // Thu thập đáp án
         let finalAnswers = {};
         for(let i = 1; i <= 100; i++) {
             let ans = document.querySelector(`input[name="ans-${i}"]:checked`);
@@ -431,11 +368,8 @@
         fetch(API_URL, {
             method: 'POST',
             body: JSON.stringify({ 
-                action: 'submitExam', 
-                studentName: studentName, 
-                examName: currentExamName,
-                answers: finalAnswers,
-                writingContent: vietContent
+                action: 'submitExam', studentName: studentName, examName: currentExamName,
+                answers: finalAnswers, writingContent: vietContent
             })
         })
         .then(res => res.json())
