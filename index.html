@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luyện đề HSK 6 - Tiếng Trung COBI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Phong cách Cổ Phong - Thư Quán */
+        :root {
+            --bg-color: #F4EFEA;
+            --text-color: #3E2723;
+            --primary-color: #8B0000;
+            --gold-color: #D4AF37;
+            --answered: #8F9779;
+            --unanswered: #E2C2B3;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Noto Serif', serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); /* Vân giấy mờ */
+        }
+
+        .kaiti {
+            font-family: 'KaiTi', '楷体', STKaiti, serif;
+            font-size: 1.3rem;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-title {
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+            border-bottom: 2px double var(--gold-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: 2px solid var(--gold-color);
+            padding: 10px 24px;
+            font-family: 'Noto Serif', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover { background-color: #600000; }
+        .btn:disabled { background-color: #aaa; border-color: #888; cursor: not-allowed; }
+
+        input[type="password"], input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid var(--text-color);
+            background-color: transparent;
+            font-family: 'Noto Serif', serif;
+            box-sizing: border-box;
+        }
+
+        /* Khung hiển thị */
+        .screen { display: none; }
+        .active-screen { display: block; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .tab-btn { background: transparent; color: var(--text-color); }
+        .tab-btn.active { background: var(--primary-color); color: #fff; }
+        .tab-disabled { opacity: 0.5; pointer-events: none; position: relative; }
+        .badge { position: absolute; top: -10px; right: -10px; background: red; color: white; font-size: 0.7rem; padding: 2px 5px; border-radius: 10px; }
+
+        /* Sticky Header (Timer) */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(244, 239, 234, 0.95);
+            border-bottom: 2px solid var(--gold-color);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 4px 6px -6px #222;
+        }
+
+        .timer { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
+
+        /* Câu hỏi */
+        .question-box {
+            border: 1px solid var(--gold-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: rgba(255,255,255,0.4);
+        }
+
+        .options label { display: block; margin: 8px 0; cursor: pointer; }
+
+        /* Bảng rà soát */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .grid-item {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--text-color);
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .ans-true { background-color: var(--answered); color: #fff; }
+        .ans-false { background-color: var(--unanswered); color: var(--text-color); }
+
+        #btn-back-review {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            z-index: 101;
+        }
+        
+        .loading { text-align: center; font-style: italic; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="header-title">Tiếng Trung COBI - Thư Quán</h1>
+
+    <!-- MÀN HÌNH 1: ĐĂNG NHẬP -->
+    <div id="login-screen" class="screen active-screen">
+        <p style="text-align: center;">Mời nhập mật khâu để bước vào Thư Quán.</p>
+        <input type="password" id="passcode" placeholder="Nhập mật khẩu của bạn...">
+        <button class="btn" style="width: 100%;" onclick="login()">Tiến Nhập</button>
+        <p id="login-msg" style="color: red; text-align: center;"></p>
+    </div>
+
+    <!-- MÀN HÌNH 2: CHỌN ĐỀ -->
+    <div id="dashboard-screen" class="screen">
+        <div class="tabs">
+            <button class="btn tab-btn active">Hệ 2.0</button>
+            <button class="btn tab-btn tab-disabled">
+                Hệ 3.0 <span class="badge">Sắp ra mắt</span>
+            </button>
+        </div>
+        <h3>Danh sách Đề thi:</h3>
+        <div id="exam-list" class="loading">Đang tải danh sách đề...</div>
+    </div>
+
+    <!-- MÀN HÌNH 3: LÀM BÀI -->
+    <div id="exam-screen" class="screen">
+        <div class="sticky-header">
+            <div id="timer-display" class="timer">Đang tải Audio...</div>
+            <button class="btn" onclick="forceNextSection()">Chuyển phần sau >></button>
+        </div>
+        
+        <!-- Audio ẩn -->
+        <audio id="mainAudio"></audio>
+        
+        <div id="exam-content" class="kaiti"></div>
+    </div>
+
+    <!-- MÀN HÌNH 4: RÀ SOÁT -->
+    <div id="review-screen" class="screen">
+        <div class="sticky-header">
+            <div id="review-timer" class="timer">Rà soát: 05:00</div>
+            <button class="btn" onclick="submitFinalExam()">Nộp bài ngay</button>
+        </div>
+        <h3>Bảng rà soát 100 câu Trắc nghiệm</h3>
+        <p><i>Ô xanh ngọc: Đã chọn | Ô giấy úa: Chưa chọn. Nhấp vào để nhảy đến câu.</i></p>
+        <div id="review-grid" class="grid-container"></div>
+    </div>
+
+    <!-- MÀN HÌNH 5: KẾT QUẢ -->
+    <div id="result-screen" class="screen" style="text-align: center;">
+        <h2>Khảo hạch hoàn tất!</h2>
+        <p>Điểm Nghe: <span id="res-nghe" style="font-weight:bold; color:var(--primary-color)"></span>/100</p>
+        <p>Câu Nghe sai: <span id="res-nghe-sai"></span></p>
+        <p>Điểm Đọc: <span id="res-doc" style="font-weight:bold; color:var(--primary-color)"></span>/100</p>
+        <p>Câu Đọc sai: <span id="res-doc-sai"></span></p>
+        <p><i>Phần Viết đã được lưu vào hồ sơ để Lão Sư phê duyệt.</i></p>
+    </div>
+
+    <button id="btn-back-review" class="btn" onclick="backToReview()">Quay lại Rà soát</button>
+</div>
+
+<script>
+    // --- CẤU HÌNH API ---
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwtNYUv_5tta2BFmcsQqNiG7lUZdX0aZSHQr4TN4QhHmKRAtoyytaY6yTHsCeagSCAyBQ/exec';
+    
+    // ĐIỀN LINK GITHUB CHỨA AUDIO CỦA BẠN VÀO ĐÂY:
+    const GITHUB_AUDIO_BASE_URL = 'https://raw.githubusercontent.com/TEN_GITHUB/REPO_AUDIO/main/';
+
+    // --- BIẾN TOÀN CỤC ---
+    let studentName = "";
+    let currentExamName = "";
+    let currentSection = ""; // 'nghe', 'doc', 'viet', 'rasoat'
+    let timerInterval;
+    let timeRemaining = 0;
+    
+    // --- DEVICE ID ---
+    function getDeviceId() {
+        let id = localStorage.getItem('cobi_device_id');
+        if (!id) {
+            id = 'COBI-' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('cobi_device_id', id);
+        }
+        return id;
+    }
+
+    // --- LUỒNG ĐĂNG NHẬP ---
+    function login() {
+        const pass = document.getElementById('passcode').value;
+        const msg = document.getElementById('login-msg');
+        if(!pass) { msg.innerText = "Chưa nhập mật khẩu!"; return; }
+        
+        msg.innerText = "Đang xác thực...";
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'login', password: pass, deviceId: getDeviceId() })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                studentName = data.name;
+                switchScreen('dashboard-screen');
+                loadExams();
+            } else {
+                msg.innerText = data.message;
+            }
+        });
+    }
+
+    // --- TẢI DANH SÁCH ĐỀ ---
+    function loadExams() {
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'getExamList' })
+        })
+        .then(res => res.json())
+        .then(data => {
+            let html = "";
+            data.exams.forEach(exam => {
+                html += `<button class="btn" style="display:block; width:100%; margin-bottom:10px;" onclick="fetchExamData('${exam}')">${exam}</button>`;
+            });
+            document.getElementById('exam-list').innerHTML = html;
+        });
+    }
+
+    // --- TẢI DỮ LIỆU 1 ĐỀ CỤ THỂ ---
+    function fetchExamData(examName) {
+        currentExamName = examName;
+        document.getElementById('exam-list').innerHTML = "Đang kéo dữ liệu đề thi...";
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'getExamData', examName: examName })
+        })
+        .then(res => res.json())
+        .then(data => {
+            buildExamHTML(data.data);
+            switchScreen('exam-screen');
+            startSectionNghe();
+        });
+    }
+
+    // --- XÂY DỰNG GIAO DIỆN CÂU HỎI ---
+    function buildExamHTML(data) {
+        let html = "";
+        data.forEach(row => {
+            let stt = row.stt;
+            if(!stt) return;
+            
+            // Chia div theo phần để dễ ẩn hiện
+            let secClass = (stt <= 50) ? 'sec-nghe' : (stt <= 100) ? 'sec-doc' : 'sec-viet';
+            
+            html += `<div id="q-${stt}" class="question-box ${secClass}" style="display:none;">`;
+            html += `<b>Câu ${stt}:</b> ${row.cauHoi}<br><br>`;
+            
+            if (stt <= 100) {
+                // Trắc nghiệm
+                ['a', 'b', 'c', 'd'].forEach(opt => {
+                    if (row[opt]) {
+                        let optUpper = opt.toUpperCase();
+                        html += `<div class="options"><label><input type="radio" name="ans-${stt}" value="${optUpper}"> ${optUpper}. ${row[opt]}</label></div>`;
+                    }
+                });
+            } else {
+                // Viết câu 101
+                html += `<textarea id="ans-101" rows="10" placeholder="Gõ bài tóm tắt của bạn vào đây..."></textarea>`;
+            }
+            html += `</div>`;
+        });
+        document.getElementById('exam-content').innerHTML = html;
+    }
+
+    // --- LUỒNG THI: NGHE ---
+    function startSectionNghe() {
+        currentSection = 'nghe';
+        document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'block');
+        
+        let audio = document.getElementById('mainAudio');
+        audio.src = GITHUB_AUDIO_BASE_URL + currentExamName + ".mp3";
+        
+        document.getElementById('timer-display').innerText = "Phần Nghe đang phát...";
+        audio.play().catch(e => {
+            // Xử lý lỗi autoplay của trình duyệt
+            document.getElementById('timer-display').innerHTML = `<button onclick="document.getElementById('mainAudio').play(); this.style.display='none';">Bấm để phát Audio</button>`;
+        });
+        
+        audio.onended = function() { forceNextSection(); };
+    }
+
+    // --- LUỒNG THI: ĐỌC ---
+    function startSectionDoc() {
+        currentSection = 'doc';
+        document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.sec-doc').forEach(el => el.style.display = 'block');
+        startTimer(50 * 60, document.getElementById('timer-display'), "Đọc: ");
+    }
+
+    // --- LUỒNG THI: VIẾT ---
+    function startSectionViet() {
+        currentSection = 'viet';
+        document.querySelectorAll('.sec-doc').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.sec-viet').forEach(el => el.style.display = 'block');
+        startTimer(45 * 60, document.getElementById('timer-display'), "Viết: ");
+    }
+
+    // --- LUỒNG THI: RÀ SOÁT ---
+    function startSectionRaSoat() {
+        currentSection = 'rasoat';
+        switchScreen('review-screen');
+        buildReviewGrid();
+        startTimer(5 * 60, document.getElementById('review-timer'), "Rà soát: ");
+    }
+
+    // --- ĐIỀU HƯỚNG CÁC PHẦN ---
+    function forceNextSection() {
+        clearInterval(timerInterval);
+        if (currentSection === 'nghe') {
+            document.getElementById('mainAudio').pause();
+            startSectionDoc();
+        } else if (currentSection === 'doc') {
+            startSectionViet();
+        } else if (currentSection === 'viet') {
+            startSectionRaSoat();
+        } else if (currentSection === 'rasoat') {
+            submitFinalExam();
+        }
+    }
+
+    // --- HỆ THỐNG TIMER ---
+    function startTimer(seconds, displayElement, prefix) {
+        timeRemaining = seconds;
+        updateTimerUI(displayElement, prefix);
+        
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            updateTimerUI(displayElement, prefix);
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                forceNextSection();
+            }
+        }, 1000);
+    }
+
+    function updateTimerUI(el, prefix) {
+        let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
+        let s = (timeRemaining % 60).toString().padStart(2, '0');
+        el.innerText = prefix + m + ":" + s;
+    }
+
+    // --- BẢNG RÀ SOÁT ---
+    function buildReviewGrid() {
+        let html = "";
+        for (let i = 1; i <= 100; i++) {
+            let checked = document.querySelector(`input[name="ans-${i}"]:checked`);
+            let statusClass = checked ? "ans-true" : "ans-false";
+            html += `<div class="grid-item ${statusClass}" onclick="jumpToQuestion(${i})">${i}</div>`;
+        }
+        document.getElementById('review-grid').innerHTML = html;
+    }
+
+    function jumpToQuestion(stt) {
+        switchScreen('exam-screen');
+        // Ẩn tất cả, chỉ hiện phần chứa câu hỏi đó
+        document.querySelectorAll('.sec-nghe, .sec-doc, .sec-viet').forEach(el => el.style.display = 'none');
+        let secClass = (stt <= 50) ? 'sec-nghe' : 'sec-doc';
+        document.querySelectorAll('.' + secClass).forEach(el => el.style.display = 'block');
+        
+        document.getElementById('q-' + stt).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('btn-back-review').style.display = 'block';
+    }
+
+    function backToReview() {
+        document.getElementById('btn-back-review').style.display = 'none';
+        buildReviewGrid(); // Cập nhật lại màu sắc
+        switchScreen('review-screen');
+    }
+
+    // --- NỘP BÀI ---
+    function submitFinalExam() {
+        clearInterval(timerInterval);
+        document.getElementById('review-screen').innerHTML = "<h2 style='text-align:center;'>Đang nộp bài thi. Lão sư chờ một lát...</h2>";
+        
+        // Thu thập đáp án
+        let finalAnswers = {};
+        for(let i = 1; i <= 100; i++) {
+            let ans = document.querySelector(`input[name="ans-${i}"]:checked`);
+            finalAnswers[i] = ans ? ans.value : "";
+        }
+        let vietContent = document.getElementById('ans-101') ? document.getElementById('ans-101').value : "";
+
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({ 
+                action: 'submitExam', 
+                studentName: studentName, 
+                examName: currentExamName,
+                answers: finalAnswers,
+                writingContent: vietContent
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            switchScreen('result-screen');
+            document.getElementById('res-nghe').innerText = data.diemNghe;
+            document.getElementById('res-nghe-sai').innerText = data.cauNgheSai;
+            document.getElementById('res-doc').innerText = data.diemDoc;
+            document.getElementById('res-doc-sai').innerText = data.cauDocSai;
+        });
+    }
+
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
+        document.getElementById(screenId).classList.add('active-screen');
+    }
+</script>
+</body>
+</html>
