@@ -14,22 +14,32 @@ main{max-width:900px;margin:auto;padding:12px}.card{background:var(--c);border:1
 <main id=m>Đang tải…</main>
 <script>
 const $=s=>document.querySelector(s),M=$('#m'),DAY=864e5,IV=[1,2,4,7,14];
-let V=[],E=[],S,T;
+let V=[],E=[],S,T,LS={},BQ='';
 try{S=JSON.parse(localStorage.getItem('hsk6'))}catch(e){}S=S||{n:[],h:[]};
 const sv=()=>{try{localStorage.setItem('hsk6',JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const due=()=>S.n.filter(n=>n.due<=Date.now()),L6='ABCDEF';
 const toast=m=>{const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:6px 14px;border-radius:20px;z-index:9';document.body.append(d);setTimeout(()=>d.remove(),1400)};
-(async()=>{try{V=await(await fetch('data/vocab.json')).json();E=(await(await fetch('data/exams.json')).json()).exams}catch(e){M.textContent='Không tải được dữ liệu. Hãy mở qua đường link GitHub Pages (không mở file trực tiếp).';return}go('home')})();
+(async()=>{try{V=await(await fetch('data/vocab.json')).json();E=(await(await fetch('data/exams.json')).json()).exams;LS=await(await fetch('data/lessons.json')).json().catch(()=>({}))}catch(e){M.textContent='Không tải được dữ liệu. Hãy mở qua đường link GitHub Pages (không mở file trực tiếp).';return}go('home')})();
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
 function go(t){document.onselectionchange=null;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==t));clearInterval(T);({home,read,notes,mock})[t]()}
-function add(w,ctx,src){if(S.n.some(n=>n.w==w)){toast('Đã có trong sổ tay');return}const v=V.find(x=>x.w==w)||{};
+function add(w,ctx,src){if(S.n.some(n=>n.w==w)){toast('Đã có trong sổ tay');return}const v=V.find(x=>x.w==w)||{},l=LS[w]||{};
 const sen=(ctx||'').split(/(?<=[。！？])/).find(x=>x.includes(w))||'';
-S.n.push({w,py:v.py||'',vi:v.vi||'',coll:v.coll||'',conf:v.conf||'',ex:v.ex||'',ctx:sen,src:src||'',lv:0,due:Date.now()});sv();toast('Đã thêm “'+w+'”')}
+S.n.push({w,py:v.py||'',vi:v.vi||'',coll:v.coll||(l.coll||[]).join(' · '),conf:v.conf||l.conf||'',ex:v.ex||'',ctx:sen,src:src||'',lv:0,due:Date.now()});sv();toast('Đã thêm “'+w+'”')}
 
+const lesson=(o,r)=>{const l=LS[o]||{},v=V.find(x=>x.w==o)||{};return`<div style="margin-top:8px"><span class=chip data-w="${esc(o)}">＋ sổ tay</span><b class="zh ${r?'ok':''}">${esc(o)}</b> <span class=mu>${esc(v.py||'')} · ${esc(l.vi||v.vi||'')} ${l.pos?'('+esc(l.pos)+')':''}</span><div class=mu>Hay đi với: ${esc((l.coll||[]).join('、'))||'—'}${l.conf?'<br>Dễ nhầm: '+esc(l.conf):''}<br>${esc(l.note||'')}</div></div>`};
+function newWords(){S.sk=S.sk||[];const have=new Set([...S.n.map(n=>n.w),...S.sk]),B=V.filter(x=>!have.has(x.w)).slice(0,10);
+M.innerHTML=`<button id=bk>← Sổ tay</button><div class=card><b>Từ mới cần học</b> <span class=mu>còn ${V.length-have.size} từ chưa duyệt. “Chưa biết” sẽ vào sổ tay để ôn theo lịch.</span></div>`+B.map((x,i)=>`<div class=card><span class=zh><b>${esc(x.w)}</b></span> ${esc(x.py)}<div>${esc(x.vi)}</div><button data-a=${i} class=p>＋ Chưa biết</button> <button data-s=${i}>Biết rồi</button></div>`).join('')+'<button id=nx>10 từ tiếp theo</button>';
+$('#bk').onclick=notes;$('#nx').onclick=newWords;
+M.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{add(B[b.dataset.a].w);b.closest('.card').remove()});
+M.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S.sk.push(B[b.dataset.s].w);sv();b.closest('.card').remove()})}
+function browse(p=0){const P=40,t=BQ.toLowerCase(),L=V.filter(x=>!t||x.w.includes(t)||x.py.toLowerCase().includes(t)||x.vi.toLowerCase().includes(t)),N=Math.ceil(L.length/P)||1;
+M.innerHTML=`<button id=bk>← Sổ tay</button> <input id=bs placeholder="Lọc (chữ / pinyin / nghĩa)" value="${esc(BQ)}"><div class=mu>${L.length} từ · trang ${p+1}/${N}</div>`+L.slice(p*P,p*P+P).map(x=>`<div class=card><b class=zh>${esc(x.w)}</b> ${esc(x.py)} · ${esc(x.vi)} <button data-w="${esc(x.w)}" ${S.n.some(n=>n.w==x.w)?'disabled':''}>＋</button></div>`).join('')+'<button id=pv>←</button> <button id=nxp>→</button>';
+$('#bk').onclick=notes;$('#bs').onchange=e=>{BQ=e.target.value;browse(0)};$('#pv').onclick=()=>browse(Math.max(p-1,0));$('#nxp').onclick=()=>browse(Math.min(p+1,N-1));
+M.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{add(b.dataset.w);b.disabled=true})}
 function home(){const d=S.exam?Math.ceil((new Date(S.exam)-Date.now())/DAY):null;
 M.innerHTML=`<div class=card><b>Ngày thi</b> <input type=date id=ed value="${S.exam||''}"> ${d!=null?`<b>còn ${d} ngày</b>`:''}</div>
-<div class=card>📒 Sổ tay: <b>${S.n.length}</b> từ · cần ôn hôm nay: <b>${due().length}</b> · Kho từ: ${V.length}</div>
+<div class=card>📒 Sổ tay: <b>${S.n.length}</b> từ · cần ôn hôm nay: <b>${due().length}</b> · Kho từ: ${V.length} ${V.length?'':'<b class=no>(trống — kiểm tra file data/vocab.json)</b>'}</div>
 <div class=card><b>Lịch sử thi thử</b>${S.h.slice(-8).reverse().map(h=>`<div>${new Date(h.t).toLocaleDateString()} · ${esc(h.e)} · ${h.s}: ${h.c}/${h.k} → <b class="${h.p<60?'no':'ok'}">${h.p}/100</b></div>`).join('')||'<div class=mu>Chưa có.</div>'}</div>
 <div class=card><button id=ex>Xuất sao lưu</button> <label class=mu>Nhập: <input type=file id=im accept=.json></label><div class=mu>Dữ liệu lưu riêng trên từng thiết bị. Cuối buổi học hãy xuất file rồi nhập vào thiết bị còn lại (nhập sẽ thay thế dữ liệu hiện có).</div></div>`;
 $('#ed').onchange=e=>{S.exam=e.target.value;sv();home()};
@@ -43,21 +53,21 @@ function doSet(s){const full=s.text.replace(/\{(\d+)\}/g,(m,n)=>{const q=s.qs.fi
 const sel=q=>`<select data-n=${q.n}><option value=-1>${q.n}</option>${q.o.map((o,j)=>`<option value=${j}>${L6[j]}. ${esc(o)}</option>`).join('')}</select>`;
 const html=esc(s.text).replace(/\{(\d+)\}/g,(m,n)=>sel(s.qs.find(q=>q.n==n)));
 const rest=s.qs.filter(q=>!s.text.includes('{'+q.n+'}')).map(q=>`<div class=card>${q.n}. ${esc(q.p||'')} ${sel(q)}</div>`).join('');
-M.innerHTML=`<button id=bk>← Danh sách</button><div class="card zh" id=ps>${html}</div>${rest}<button id=sb class=p style="display:none;position:sticky;bottom:8px"></button> <button id=sm class=p>Nộp bài</button><div id=rs></div>`;
-$('#bk').onclick=read;
+M.innerHTML=`<button id=bk>← Danh sách</button><div class="card mu">Cách làm: ① xác định từ loại cần điền (động/danh/tính/phó) ② nhìn từ đi liền trước và sau chỗ trống ③ loại các từ sai nghĩa hoặc sai từ loại. <label><input type=checkbox id=hn> Hiện gợi ý</label><div id=hs style="display:none">${s.qs.map(q=>q.n+'. '+esc(q.hint||'—')).join('<br>')}</div></div><div class="card zh" id=ps>${html}</div>${rest}<button id=sb class=p style="display:none;position:sticky;bottom:8px"></button> <button id=sm class=p>Nộp bài</button><div id=rs></div>`;
+$('#bk').onclick=read;$('#hn').onchange=e=>$('#hs').style.display=e.target.checked?'':'none';
 document.onselectionchange=()=>{const g=getSelection(),t=g.toString().trim(),b=$('#sb');if(b&&t&&t.length<=12&&g.anchorNode&&$('#ps').contains(g.anchorNode)){b.style.display='';b.textContent='＋ Thêm “'+t+'” vào sổ tay';b.onclick=()=>add(t,full,s.title)}};
 $('#sm').onclick=()=>{let c=0,h='';s.qs.forEach(q=>{const el=M.querySelector(`select[data-n="${q.n}"]`),ok=+el.value==q.a;c+=ok;el.style.outline='2px solid '+(ok?'#2a8a4a':'#c0392b');
-h+=`<div class=card><b class=${ok?'ok':'no'}>${q.n}. ${ok?'✓':'✗ đáp án '+L6[q.a]}</b> ${esc(q.why||'')}<div>${q.o.filter(o=>o.length<=6).map(o=>`<span class=chip data-w="${esc(o)}">＋${esc(o)}</span>`).join('')}</div></div>`});
-$('#rs').innerHTML=`<h3>${c}/${s.qs.length}</h3><div class=mu>Chạm vào từ bên dưới để thêm vào sổ tay.</div>`+h;
+h+=`<div class=card><b class=${ok?'ok':'no'}>${q.n}. ${ok?'✓':'✗ đáp án '+L6[q.a]}</b> ${esc(q.why||'')}${q.o.filter(o=>o.length<=6).map(o=>lesson(o,o==q.o[q.a])).join('')}</div>`});
+$('#rs').innerHTML=`<h3>${c}/${s.qs.length}</h3><div class=mu>Mỗi từ dưới đây có nghĩa, các từ hay đi cùng và lý do đúng/sai. Chạm “＋ sổ tay” để lưu.</div>`+h;
 $('#rs').querySelectorAll('.chip').forEach(x=>x.onclick=()=>{add(x.dataset.w,full,s.title);x.style.opacity=.4})}}
 
 function notes(){
 M.innerHTML=`<div class=card><input id=q placeholder="Tìm trong kho từ (chữ / pinyin / nghĩa) để thêm" style="width:100%"><div id=sr></div></div>
-<div class=card><button class=p id=r1>Ôn hôm nay (${due().length})</button> <button id=r2>Ôn dạng điền trống</button></div><div id=ls></div>`;
+<div class=card><button class=p id=r1>Ôn hôm nay (${due().length})</button> <button id=r2>Ôn dạng điền trống</button> <button id=r3>📖 Học từ mới</button> <button id=r4>Duyệt kho từ</button></div><div id=ls></div>`;
 $('#q').oninput=e=>{const t=e.target.value.trim().toLowerCase();$('#sr').innerHTML=t?V.filter(x=>x.w.includes(t)||x.py.toLowerCase().includes(t)||x.vi.toLowerCase().includes(t)).slice(0,8).map(x=>`<div><span class=chip data-w="${esc(x.w)}">＋${esc(x.w)}</span> <span class=mu>${esc(x.py)} · ${esc(x.vi)}</span></div>`).join(''):'';
 $('#sr').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{add(c.dataset.w);notes()})};
-$('#r1').onclick=()=>review(1);$('#r2').onclick=()=>review(2);
-$('#ls').innerHTML=S.n.map((n,i)=>`<div class=card><span class=zh><b>${esc(n.w)}</b></span> ${esc(n.py)} <span class=dots>${'●'.repeat(n.lv)}${'○'.repeat(5-n.lv)}</span> <button data-d=${i}>✕</button><div>${esc(n.vi)}</div>${[['coll','Hay đi với'],['conf','Dễ nhầm với'],['ex','Ví dụ']].map(([k,l])=>`<div class=mu>${l}</div><textarea rows=1 data-i=${i} data-k=${k}>${esc(n[k])}</textarea>`).join('')}<div class=mu>${esc(n.ctx)} ${n.src?'· '+esc(n.src):''}</div></div>`).reverse().join('')||'<div class=mu>Sổ tay trống — làm bài đọc và bôi đen từ chưa biết.</div>';
+$('#r1').onclick=()=>review(1);$('#r2').onclick=()=>review(2);$('#r3').onclick=newWords;$('#r4').onclick=()=>browse(0);
+$('#ls').innerHTML=S.n.map((n,i)=>`<div class=card><span class=zh><b>${esc(n.w)}</b></span> ${esc(n.py)} <span class=dots>${'●'.repeat(n.lv)}${'○'.repeat(5-n.lv)}</span> <button data-d=${i}>✕</button><div>${esc(n.vi)}</div>${[['coll','Hay đi với'],['conf','Dễ nhầm với'],['ex','Ví dụ']].map(([k,l])=>`<div class=mu>${l}</div><textarea rows=1 data-i=${i} data-k=${k}>${esc(n[k])}</textarea>`).join('')}<div class=mu>${esc(n.ctx)} ${n.src?'· '+esc(n.src):''}</div></div>`).reverse().join('')||'<div class=mu>Sổ tay trống — bấm “Học từ mới” hoặc làm bài đọc rồi bôi đen từ chưa biết.</div>';
 $('#ls').querySelectorAll('textarea').forEach(t=>t.onchange=()=>{S.n[t.dataset.i][t.dataset.k]=t.value;sv()});
 $('#ls').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{if(confirm('Xoá từ này?')){S.n.splice(b.dataset.d,1);sv();notes()}})}
 
