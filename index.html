@@ -1,573 +1,90 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Quán COBI - Khảo Hạch & Tàng Kinh Các</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #F4EFEA;
-            --text-color: #3E2723;
-            --primary-color: #8B0000;
-            --gold-color: #D4AF37;
-            --answered: #8F9779;
-            --unanswered: #E2C2B3;
-        }
-        
-        body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Noto Serif', serif; margin: 0; padding: 0; background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); }
-        .kaiti { font-family: 'KaiTi', '楷体', STKaiti, serif; font-size: 1.4rem; line-height: 1.8; }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header-title { text-align: center; font-family: 'Playfair Display', serif; color: var(--primary-color); padding-bottom: 10px; margin-bottom: 10px; }
-        
-        /* Navigation (Thanh điều hướng) */
-        .main-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; border-bottom: 2px double var(--gold-color); padding-bottom: 15px; }
-        .nav-btn { background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); padding: 8px 20px; font-family: 'Playfair Display', serif; font-size: 1.1rem; cursor: pointer; border-radius: 4px; transition: 0.3s; font-weight: bold; }
-        .nav-btn.active, .nav-btn:hover { background: var(--primary-color); color: #fff; }
-
-        .btn { background-color: var(--primary-color); color: #fff; border: 2px solid var(--gold-color); padding: 10px 24px; font-family: 'Noto Serif', serif; font-size: 1rem; cursor: pointer; transition: all 0.3s; border-radius: 4px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); }
-        .btn:hover { background-color: #600000; }
-        .btn-outline { background: transparent; color: var(--primary-color); border: 2px solid var(--primary-color); }
-        .btn-outline:hover { background: var(--primary-color); color: white; }
-        
-        input[type="password"], input[type="text"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid var(--text-color); background-color: transparent; font-family: 'Noto Serif', serif; box-sizing: border-box; }
-
-        .screen { display: none; }
-        .active-screen { display: block; }
-        .zone { display: none; } /* Khu vực lớn: Thi / Từ vựng */
-        .active-zone { display: block; }
-
-        .sticky-header { position: sticky; top: 0; background-color: rgba(244, 239, 234, 0.95); border-bottom: 2px solid var(--gold-color); padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-shadow: 0 4px 6px -6px #222; }
-        .timer { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); }
-
-        /* Khảo Thí Đường CSS */
-        .section-instruction { background-color: rgba(212, 175, 55, 0.2); border-left: 4px solid var(--primary-color); padding: 10px 15px; margin: 30px 0 15px 0; font-weight: bold; }
-        .passage-box { background-color: rgba(255,255,255,0.7); border: 2px solid var(--text-color); padding: 20px; margin-bottom: 20px; text-align: justify; border-radius: 4px; }
-        .question-box { border: 1px dashed var(--gold-color); padding: 15px; margin-bottom: 20px; background-color: rgba(255,255,255,0.4); }
-        .options label { display: block; margin: 8px 0; cursor: pointer; }
-        .manuscript-paper { width: 100%; height: 500px; padding: 10px; font-size: 1.4rem; line-height: 40px; background-color: #fdfaf5; background-image: linear-gradient(transparent 39px, #D4AF37 40px); background-size: 100% 40px; border: 1px solid var(--text-color); font-family: 'KaiTi', '楷体', serif; resize: vertical; box-sizing: border-box; color: var(--text-color); }
-        .manuscript-paper:focus { outline: none; border-color: var(--primary-color); }
-        .grid-container { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin: 20px 0; }
-        .grid-item { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid var(--text-color); cursor: pointer; font-weight: bold; }
-        .ans-true { background-color: var(--answered); color: #fff; }
-        .ans-false { background-color: var(--unanswered); color: var(--text-color); }
-
-        /* Tàng Kinh Các CSS (Thẻ bài) */
-        .flashcard-container { perspective: 1000px; margin: 30px auto; width: 100%; max-width: 400px; height: 350px; }
-        .flashcard { width: 100%; height: 100%; position: relative; transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; }
-        .flashcard.is-flipped { transform: rotateY(180deg); }
-        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 3px solid var(--gold-color); background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; box-sizing: border-box; text-align: center; }
-        .card-front { background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); background-color: #f9f6f0; }
-        .card-back { transform: rotateY(180deg); background-color: #fff; justify-content: flex-start; overflow-y: auto; }
-        .hanzi-big { font-family: 'KaiTi', serif; font-size: 5rem; color: var(--primary-color); margin-bottom: 10px; }
-        .pinyin { font-size: 1.5rem; color: #555; margin-bottom: 15px; font-weight: bold; }
-        .meaning { font-size: 1.2rem; font-weight: bold; color: var(--primary-color); margin-bottom: 15px; }
-        .example { font-family: 'KaiTi', serif; font-size: 1.3rem; text-align: left; border-top: 1px dashed var(--gold-color); padding-top: 15px; width: 100%; }
-        
-        .action-row { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
-        .vocab-menu { display: grid; grid-template-columns: 1fr; gap: 15px; max-width: 400px; margin: 0 auto; }
-        .bookmark-btn { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; background: none; border: none; cursor: pointer; color: #ccc; }
-        .bookmark-btn.bookmarked { color: var(--primary-color); }
-        
-        .sound-btn { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--gold-color); }
-        .sound-btn:hover { color: var(--primary-color); }
-
-        #btn-back-review { position: fixed; bottom: 20px; right: 20px; display: none; z-index: 101; }
-        .loading { text-align: center; font-style: italic; color: #666; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1 class="header-title">Tiếng Trung COBI</h1>
-    
-    <!-- THANH ĐIỀU HƯỚNG 2 PHÂN KHU -->
-    <div class="main-nav">
-        <button class="nav-btn active" onclick="switchZone('khao-thi')">Khảo Thí Đường</button>
-        <button class="nav-btn" onclick="switchZone('tang-kinh')">Tàng Kinh Các</button>
-    </div>
-
-    <!-- ============================================== -->
-    <!-- ZONE 1: KHẢO THÍ ĐƯỜNG (LUYỆN ĐỀ)              -->
-    <!-- ============================================== -->
-    <div id="zone-khao-thi" class="zone active-zone">
-        <div id="login-screen" class="screen active-screen">
-            <p style="text-align: center;">Mời nhập mật khẩu để bước vào Khảo Thí Đường.</p>
-            <input type="password" id="passcode" placeholder="Nhập mật khẩu của bạn...">
-            <button class="btn" style="width: 100%;" onclick="login()">Tiến Nhập</button>
-            <p id="login-msg" style="color: red; text-align: center;"></p>
-        </div>
-
-        <div id="dashboard-screen" class="screen">
-            <h3 style="text-align: center;">Danh sách Đề thi (Hệ 2.0)</h3>
-            <div id="exam-list" class="loading">Đang tải danh sách đề...</div>
-        </div>
-
-        <div id="ready-screen" class="screen" style="text-align: center; margin-top: 50px;">
-            <h2 style="color: var(--primary-color);">Dữ liệu Đề thi đã tải xong!</h2>
-            <p>Vui lòng đeo tai nghe, chuẩn bị giấy nháp (nếu cần).</p>
-            <button class="btn" style="font-size: 1.2rem; padding: 15px 30px; margin-top: 20px;" onclick="startExamReal()">Bắt đầu làm bài</button>
-        </div>
-
-        <div id="exam-screen" class="screen">
-            <div class="sticky-header">
-                <div id="timer-display" class="timer">Thời gian...</div>
-                <button class="btn" onclick="forceNextSection()">Chuyển tiếp >></button>
-            </div>
-            <audio id="mainAudio"></audio>
-            <div id="exam-content" class="kaiti"></div>
-        </div>
-
-        <div id="review-screen" class="screen">
-            <div class="sticky-header">
-                <div id="review-timer" class="timer">Rà soát: 05:00</div>
-                <button class="btn" onclick="submitFinalExam()">Nộp bài ngay</button>
-            </div>
-            <h3>Bảng rà soát 100 câu Trắc nghiệm</h3>
-            <div id="review-grid" class="grid-container"></div>
-        </div>
-
-        <div id="result-screen" class="screen" style="text-align: center;">
-            <h2>Khảo hạch hoàn tất!</h2>
-            <p>Điểm Nghe: <span id="res-nghe" style="font-weight:bold; color:var(--primary-color)"></span>/100</p>
-            <p>Câu Nghe sai: <span id="res-nghe-sai"></span></p>
-            <p>Điểm Đọc: <span id="res-doc" style="font-weight:bold; color:var(--primary-color)"></span>/100</p>
-            <p>Câu Đọc sai: <span id="res-doc-sai"></span></p>
-            <p><i>Phần Viết đã được lưu vào hồ sơ để Lão Sư phê duyệt.</i></p>
-            <button class="btn" style="margin-top:20px;" onclick="switchScreen('dashboard-screen')">Về trang chủ</button>
-        </div>
-        
-        <button id="btn-back-review" class="btn" onclick="backToReview()">Quay lại Rà soát</button>
-    </div>
-
-    <!-- ============================================== -->
-    <!-- ZONE 2: TÀNG KINH CÁC (TỪ VỰNG)                -->
-    <!-- ============================================== -->
-    <div id="zone-tang-kinh" class="zone">
-        <!-- Menu Tàng Kinh Các -->
-        <div id="vocab-menu-screen" class="screen active-screen">
-            <h3 style="text-align: center; color: var(--primary-color);">Bảo Tàng Từ Vựng HSK 6</h3>
-            <p style="text-align: center; font-style: italic; margin-bottom: 30px;" id="vocab-status">Đang thỉnh chân kinh (Tải dữ liệu)...</p>
-            
-            <div class="vocab-menu">
-                <button class="btn" onclick="startVocabMode('all')">📖 Học Thẻ Bài (Toàn Bộ)</button>
-                <button class="btn btn-outline" onclick="startVocabMode('hard')">🔖 Ôn Thẻ Bài (Sổ Tay Từ Khó)</button>
-                <button class="btn" style="background-color: #2B547E;" onclick="startVocabQuiz()">✍️ Trắc Nghiệm: Điền Khuyết Từ (10 Câu)</button>
-            </div>
-        </div>
-
-        <!-- Màn hình Thẻ bài (Flashcard) -->
-        <div id="vocab-flashcard-screen" class="screen">
-            <button class="btn btn-outline" onclick="backToVocabMenu()">< Quay lại</button>
-            <div style="text-align: center; margin-top: 10px; font-weight: bold;">
-                Tiến độ: <span id="fc-progress">0/0</span>
-            </div>
-            
-            <div class="flashcard-container" onclick="flipCard()">
-                <div class="flashcard" id="flashcard-ui">
-                    <!-- Mặt trước -->
-                    <div class="card-face card-front">
-                        <button class="bookmark-btn" id="btn-bookmark" onclick="toggleBookmark(event)">★</button>
-                        <div class="hanzi-big" id="fc-hanzi">字</div>
-                        <button class="sound-btn" onclick="playAudio(event)">🔊</button>
-                    </div>
-                    <!-- Mặt sau -->
-                    <div class="card-face card-back">
-                        <div class="pinyin" id="fc-pinyin">pīn yīn</div>
-                        <div class="meaning" id="fc-meaning">Ý nghĩa</div>
-                        <div class="example" id="fc-example">Ví dụ minh họa.</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="action-row">
-                <button class="btn" style="background-color: #888;" onclick="nextCard(false)">❌ Chưa thông</button>
-                <button class="btn" style="background-color: var(--answered);" onclick="nextCard(true)">✔️ Đã ngộ</button>
-            </div>
-        </div>
-
-        <!-- Màn hình Trắc nghiệm Từ vựng -->
-        <div id="vocab-quiz-screen" class="screen">
-            <div class="sticky-header">
-                <div class="timer">Luyện Điền Khuyết HSK 6</div>
-                <button class="btn btn-outline" onclick="backToVocabMenu()">Thoát</button>
-            </div>
-            <div id="quiz-content" class="kaiti" style="margin-top: 20px;"></div>
-            <div style="text-align: center; margin-top: 30px; display: none;" id="quiz-result-area">
-                <h3 style="color: var(--primary-color);">Kết quả: <span id="quiz-score">0</span> / 10</h3>
-                <button class="btn" onclick="startVocabQuiz()">Luyện 10 câu khác</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>HSK6 3.0</title>
+<style>
+:root{--bg:#faf8f4;--fg:#222;--c:#fff;--b:#ddd;--ac:#b3402a;--mu:#777}
+@media(prefers-color-scheme:dark){:root{--bg:#1b1b1d;--fg:#eee;--c:#26262a;--b:#3a3a40;--ac:#e8785f;--mu:#999}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,"PingFang SC","Noto Sans SC",sans-serif}
+nav{display:flex;gap:4px;padding:8px;position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--b);z-index:5}nav button{flex:1}
+button,select,input,textarea{font:inherit;color:inherit;background:var(--c);border:1px solid var(--b);border-radius:8px;padding:6px 10px}
+button{cursor:pointer}button.on,button.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:900px;margin:auto;padding:12px}.card{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:12px;margin:10px 0}
+.zh{font-size:19px;line-height:2.2}.mu{color:var(--mu);font-size:14px}.ok{color:#2a8a4a}.no{color:#c0392b}
+.chip{display:inline-block;border:1px solid var(--b);border-radius:14px;padding:0 10px;margin:2px;cursor:pointer}textarea{width:100%}.dots{letter-spacing:2px;color:var(--ac)}
+</style></head><body>
+<nav><button data-t=home>Tổng quan</button><button data-t=read>Luyện đọc</button><button data-t=notes>Sổ tay</button><button data-t=mock>Thi thử</button></nav>
+<main id=m>Đang tải…</main>
 <script>
-    // ==========================================
-    // KHU VỰC CẤU HÌNH LIÊN KẾT (BẠN ĐIỀN VÀO ĐÂY)
-    // ==========================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwtNYUv_5tta2BFmcsQqNiG7lUZdX0aZSHQr4TN4QhHmKRAtoyytaY6yTHsCeagSCAyBQ/exec';
-    
-    // ĐIỀN LINK FOLDER AUDIO VÀO ĐÂY (Nhớ có / ở cuối)
-    const GITHUB_AUDIO_BASE_URL = 'https://github.com/ThuQuanCoBi/khao-thi-duong-hsk6/tree/52ea46f3b9edb48dfc3b0d5a64e2250df1d7fe0e/audio';
-    
-    // LINK TSV TỪ VỰNG BẠN VỪA GỬI (Đã điền sẵn)
-    const VOCAB_TSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTJhBAe9aEx6wwpIiHW_frfI3VCt8Y-Shb2uuRn7v3f1G6JXoWdivXBgEwHKw-trCRh711YwBL8cIbG/pub?gid=136377563&single=true&output=tsv';
+const $=s=>document.querySelector(s),M=$('#m'),DAY=864e5,IV=[1,2,4,7,14];
+let V=[],E=[],S,T;
+try{S=JSON.parse(localStorage.getItem('hsk6'))}catch(e){}S=S||{n:[],h:[]};
+const sv=()=>{try{localStorage.setItem('hsk6',JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const due=()=>S.n.filter(n=>n.due<=Date.now()),L6='ABCDEF';
+const toast=m=>{const d=document.createElement('div');d.textContent=m;d.style.cssText='position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:6px 14px;border-radius:20px;z-index:9';document.body.append(d);setTimeout(()=>d.remove(),1400)};
+(async()=>{try{V=await(await fetch('data/vocab.json')).json();E=(await(await fetch('data/exams.json')).json()).exams}catch(e){M.textContent='Không tải được dữ liệu. Hãy mở qua đường link GitHub Pages (không mở file trực tiếp).';return}go('home')})();
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.t));
+function go(t){document.onselectionchange=null;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t==t));clearInterval(T);({home,read,notes,mock})[t]()}
+function add(w,ctx,src){if(S.n.some(n=>n.w==w)){toast('Đã có trong sổ tay');return}const v=V.find(x=>x.w==w)||{};
+const sen=(ctx||'').split(/(?<=[。！？])/).find(x=>x.includes(w))||'';
+S.n.push({w,py:v.py||'',vi:v.vi||'',coll:v.coll||'',conf:v.conf||'',ex:v.ex||'',ctx:sen,src:src||'',lv:0,due:Date.now()});sv();toast('Đã thêm “'+w+'”')}
 
-    // ==========================================
-    // LOGIC ĐIỀU HƯỚNG TỔNG (ZONES & SCREENS)
-    // ==========================================
-    function switchZone(zoneId) {
-        document.querySelectorAll('.zone').forEach(el => el.classList.remove('active-zone'));
-        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-        
-        if (zoneId === 'khao-thi') {
-            document.getElementById('zone-khao-thi').classList.add('active-zone');
-            document.querySelectorAll('.nav-btn')[0].classList.add('active');
-        } else {
-            document.getElementById('zone-tang-kinh').classList.add('active-zone');
-            document.querySelectorAll('.nav-btn')[1].classList.add('active');
-            if (vocabDatabase.length === 0) loadVocabData(); // Tải từ vựng nếu chưa có
-        }
-    }
+function home(){const d=S.exam?Math.ceil((new Date(S.exam)-Date.now())/DAY):null;
+M.innerHTML=`<div class=card><b>Ngày thi</b> <input type=date id=ed value="${S.exam||''}"> ${d!=null?`<b>còn ${d} ngày</b>`:''}</div>
+<div class=card>📒 Sổ tay: <b>${S.n.length}</b> từ · cần ôn hôm nay: <b>${due().length}</b> · Kho từ: ${V.length}</div>
+<div class=card><b>Lịch sử thi thử</b>${S.h.slice(-8).reverse().map(h=>`<div>${new Date(h.t).toLocaleDateString()} · ${esc(h.e)} · ${h.s}: ${h.c}/${h.k} → <b class="${h.p<60?'no':'ok'}">${h.p}/100</b></div>`).join('')||'<div class=mu>Chưa có.</div>'}</div>
+<div class=card><button id=ex>Xuất sao lưu</button> <label class=mu>Nhập: <input type=file id=im accept=.json></label><div class=mu>Dữ liệu lưu riêng trên từng thiết bị. Cuối buổi học hãy xuất file rồi nhập vào thiết bị còn lại (nhập sẽ thay thế dữ liệu hiện có).</div></div>`;
+$('#ed').onchange=e=>{S.exam=e.target.value;sv();home()};
+$('#ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)]));a.download='hsk6-backup.json';a.click()};
+$('#im').onchange=async e=>{try{const j=JSON.parse(await e.target.files[0].text());if(!Array.isArray(j.n))throw 0;S=j;sv();home()}catch(x){alert('File không hợp lệ')}}}
 
-    function switchScreen(screenId, context = document) {
-        context.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
-        document.getElementById(screenId).classList.add('active-screen');
-    }
+function read(){const L=E.flatMap(e=>e.sets.map(s=>({...s,e:e.name})));
+M.innerHTML=L.map((s,i)=>`<div class=card><b>${esc(s.e)}</b> · ${esc(s.title)} <button data-i=${i}>Làm</button></div>`).join('')||'Chưa có bài.';
+M.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>doSet(L[b.dataset.i]))}
+function doSet(s){const full=s.text.replace(/\{(\d+)\}/g,(m,n)=>{const q=s.qs.find(q=>q.n==n);return q.o[q.a]});
+const sel=q=>`<select data-n=${q.n}><option value=-1>${q.n}</option>${q.o.map((o,j)=>`<option value=${j}>${L6[j]}. ${esc(o)}</option>`).join('')}</select>`;
+const html=esc(s.text).replace(/\{(\d+)\}/g,(m,n)=>sel(s.qs.find(q=>q.n==n)));
+const rest=s.qs.filter(q=>!s.text.includes('{'+q.n+'}')).map(q=>`<div class=card>${q.n}. ${esc(q.p||'')} ${sel(q)}</div>`).join('');
+M.innerHTML=`<button id=bk>← Danh sách</button><div class="card zh" id=ps>${html}</div>${rest}<button id=sb class=p style="display:none;position:sticky;bottom:8px"></button> <button id=sm class=p>Nộp bài</button><div id=rs></div>`;
+$('#bk').onclick=read;
+document.onselectionchange=()=>{const g=getSelection(),t=g.toString().trim(),b=$('#sb');if(b&&t&&t.length<=12&&g.anchorNode&&$('#ps').contains(g.anchorNode)){b.style.display='';b.textContent='＋ Thêm “'+t+'” vào sổ tay';b.onclick=()=>add(t,full,s.title)}};
+$('#sm').onclick=()=>{let c=0,h='';s.qs.forEach(q=>{const el=M.querySelector(`select[data-n="${q.n}"]`),ok=+el.value==q.a;c+=ok;el.style.outline='2px solid '+(ok?'#2a8a4a':'#c0392b');
+h+=`<div class=card><b class=${ok?'ok':'no'}>${q.n}. ${ok?'✓':'✗ đáp án '+L6[q.a]}</b> ${esc(q.why||'')}<div>${q.o.filter(o=>o.length<=6).map(o=>`<span class=chip data-w="${esc(o)}">＋${esc(o)}</span>`).join('')}</div></div>`});
+$('#rs').innerHTML=`<h3>${c}/${s.qs.length}</h3><div class=mu>Chạm vào từ bên dưới để thêm vào sổ tay.</div>`+h;
+$('#rs').querySelectorAll('.chip').forEach(x=>x.onclick=()=>{add(x.dataset.w,full,s.title);x.style.opacity=.4})}}
 
-    // ==========================================
-    // PHẦN 1: LOGIC KHẢO THÍ ĐƯỜNG (Đã tối ưu)
-    // ==========================================
-    const HEADINGS = { 1: "第1-15题：请选出与所听内容一致的一项。", 16: "第16-30题：请选出正确答案。", 31: "第31-50题：请选出正确答案。", 51: "第51-60题：请选出有语病的一项。", 61: "第61-70题：选词填空。", 71: "第71-80题：选句填空。", 81: "第81-100题：请选出正确答案。" };
-    let studentName = "", currentExamName = "", currentSection = "";
-    let timerInterval, timeRemaining = 0;
-    
-    function getDeviceId() {
-        let id = localStorage.getItem('cobi_device_id');
-        if (!id) { id = 'COBI-' + Math.random().toString(36).substr(2, 9); localStorage.setItem('cobi_device_id', id); }
-        return id;
-    }
+function notes(){
+M.innerHTML=`<div class=card><input id=q placeholder="Tìm trong kho từ (chữ / pinyin / nghĩa) để thêm" style="width:100%"><div id=sr></div></div>
+<div class=card><button class=p id=r1>Ôn hôm nay (${due().length})</button> <button id=r2>Ôn dạng điền trống</button></div><div id=ls></div>`;
+$('#q').oninput=e=>{const t=e.target.value.trim().toLowerCase();$('#sr').innerHTML=t?V.filter(x=>x.w.includes(t)||x.py.toLowerCase().includes(t)||x.vi.toLowerCase().includes(t)).slice(0,8).map(x=>`<div><span class=chip data-w="${esc(x.w)}">＋${esc(x.w)}</span> <span class=mu>${esc(x.py)} · ${esc(x.vi)}</span></div>`).join(''):'';
+$('#sr').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{add(c.dataset.w);notes()})};
+$('#r1').onclick=()=>review(1);$('#r2').onclick=()=>review(2);
+$('#ls').innerHTML=S.n.map((n,i)=>`<div class=card><span class=zh><b>${esc(n.w)}</b></span> ${esc(n.py)} <span class=dots>${'●'.repeat(n.lv)}${'○'.repeat(5-n.lv)}</span> <button data-d=${i}>✕</button><div>${esc(n.vi)}</div>${[['coll','Hay đi với'],['conf','Dễ nhầm với'],['ex','Ví dụ']].map(([k,l])=>`<div class=mu>${l}</div><textarea rows=1 data-i=${i} data-k=${k}>${esc(n[k])}</textarea>`).join('')}<div class=mu>${esc(n.ctx)} ${n.src?'· '+esc(n.src):''}</div></div>`).reverse().join('')||'<div class=mu>Sổ tay trống — làm bài đọc và bôi đen từ chưa biết.</div>';
+$('#ls').querySelectorAll('textarea').forEach(t=>t.onchange=()=>{S.n[t.dataset.i][t.dataset.k]=t.value;sv()});
+$('#ls').querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{if(confirm('Xoá từ này?')){S.n.splice(b.dataset.d,1);sv();notes()}})}
 
-    function login() {
-        const pass = document.getElementById('passcode').value;
-        const msg = document.getElementById('login-msg');
-        if(!pass) { msg.innerText = "Chưa nhập mật khẩu!"; return; }
-        
-        msg.innerText = "Đang mở cửa Thư Quán...";
-        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'login', password: pass, deviceId: getDeviceId() }) })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success) { 
-                studentName = data.name; 
-                switchScreen('dashboard-screen', document.getElementById('zone-khao-thi')); 
-                loadExams(); 
-            } else { msg.innerText = data.message; }
-        }).catch(err => msg.innerText = "Lỗi kết nối máy chủ. Hãy thử lại!");
-    }
+function review(mode){const Q=due().sort(()=>Math.random()-.5);let i=0;const rnd=a=>a.sort(()=>Math.random()-.5);
+const gr=(n,g)=>{n.lv=g==2?Math.min(n.lv+1,5):g==1?n.lv:0;n.due=Date.now()+(n.lv?IV[n.lv-1]*DAY:.02*DAY);sv();i++;nx()};
+function nx(){if(i>=Q.length){M.innerHTML='<div class=card>Xong! <button id=b>Về sổ tay</button></div>';$('#b').onclick=notes;return}
+const n=Q[i];
+if(mode==2&&n.ctx&&n.ctx.includes(n.w)){const o=rnd([n.w,...rnd(S.n.filter(x=>x.w!=n.w)).slice(0,3).map(x=>x.w)]);
+M.innerHTML=`<div class="card zh">${esc(n.ctx.replace(n.w,'＿＿'))}</div>`+o.map(w=>`<button data-w="${esc(w)}">${esc(w)}</button> `).join('')+'<div id=fb></div>';
+M.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{const ok=b.dataset.w==n.w;$('#fb').innerHTML=`<div class=card><b class=${ok?'ok':'no'}>${ok?'Đúng':'Sai — đáp án: '+esc(n.w)}</b> ${esc(n.py)} ${esc(n.vi)}<div>Hay đi với: ${esc(n.coll)}</div><button id=nx class=p>Tiếp</button></div>`;$('#nx').onclick=()=>gr(n,ok?2:0)})}
+else{M.innerHTML=`<div class="card zh" style="text-align:center"><b style="font-size:32px">${esc(n.w)}</b><div class=mu>Nhớ nghĩa và các từ hay đi cùng, rồi bấm xem</div><button id=sh>Xem</button><div id=an style="display:none;text-align:left;font-size:16px">${esc(n.py)} · ${esc(n.vi)}<div>Hay đi với: ${esc(n.coll)}</div><div>Dễ nhầm: ${esc(n.conf)}</div><div class=mu>${esc(n.ctx)}</div></div></div><div id=gb style="display:none"><button data-g=0>Quên</button> <button data-g=1>Mờ</button> <button data-g=2 class=p>Nhớ</button></div>`;
+$('#sh').onclick=()=>{$('#an').style.display=$('#gb').style.display=''};M.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>gr(n,+b.dataset.g))}}
+Q.length?nx():(M.innerHTML='<div class=card>Hôm nay không có từ cần ôn 🎉</div>')}
 
-    function loadExams() {
-        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getExamList' }) })
-        .then(res => res.json())
-        .then(data => {
-            let html = "";
-            data.exams.forEach(exam => {
-                html += `<button class="btn" style="display:block; width:100%; margin-bottom:10px;" onclick="fetchExamData('${exam}')">${exam}</button>`;
-            });
-            document.getElementById('exam-list').innerHTML = html;
-        });
-    }
-
-    function fetchExamData(examName) {
-        currentExamName = examName;
-        document.getElementById('exam-list').innerHTML = "Đang rút đề, Lão sư chờ chút...";
-        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getExamData', examName: examName }) })
-        .then(res => res.json())
-        .then(data => {
-            buildExamHTML(data.data);
-            let audio = document.getElementById('mainAudio');
-            audio.src = GITHUB_AUDIO_BASE_URL + encodeURIComponent(currentExamName) + ".mp3";
-            audio.load();
-            switchScreen('ready-screen', document.getElementById('zone-khao-thi'));
-        });
-    }
-
-    function buildExamHTML(data) {
-        let html = "";
-        data.forEach(row => {
-            let sttRaw = String(row.stt).trim();
-            if(!sttRaw) return;
-            let sttNum = parseInt(sttRaw);
-            
-            if (HEADINGS[sttNum]) {
-                let secClass = sttNum <= 50 ? 'sec-nghe' : 'sec-doc';
-                html += `<div class="section-instruction ${secClass}" style="display:none;">${HEADINGS[sttNum]}</div>`;
-            }
-
-            if (sttRaw.includes("-")) {
-                let isNghe = parseInt(sttRaw.split("-")[0]) <= 50;
-                let secClass = isNghe ? 'sec-nghe' : 'sec-doc';
-                html += `<div class="passage-box ${secClass}" style="display:none;"><b style="color:var(--primary-color);">【阅读材料 ${sttRaw}】</b><br><br>${row.cauHoi}</div>`;
-                return;
-            }
-
-            if (sttNum === 101) {
-                html += `<div id="q-101" class="sec-viet" style="display:none;">`;
-                html += `<div id="viet-phase-1"><h3 style="color:red; text-align:center;">阅读材料 (10分钟)</h3><p style="text-align:center;"><i>Hết 10 phút đoạn văn sẽ biến mất. Cấm chép nháp.</i></p><div class="passage-box">${row.cauHoi}</div></div>`;
-                html += `<div id="viet-phase-2" style="display:none;"><h3 style="color:red; text-align:center;">写作 (35分钟)</h3><textarea id="ans-101" class="manuscript-paper" placeholder="Gõ bài tóm tắt của bạn vào đây..."></textarea></div></div>`;
-                return;
-            }
-
-            let secClass = (sttNum <= 50) ? 'sec-nghe' : 'sec-doc';
-            html += `<div id="q-${sttNum}" class="question-box ${secClass}" style="display:none;">`;
-            if (sttNum >= 51 && sttNum <= 60) html += `<b>第 ${sttNum} 题:</b><br><br>`;
-            else html += `<b>第 ${sttNum} 题:</b> ${row.cauHoi}<br><br>`;
-
-            ['a', 'b', 'c', 'd', 'e'].forEach(opt => {
-                if (row[opt]) {
-                    let optUpper = opt.toUpperCase();
-                    html += `<div class="options"><label><input type="radio" name="ans-${sttNum}" value="${optUpper}"> ${optUpper}. ${row[opt]}</label></div>`;
-                }
-            });
-            html += `</div>`;
-        });
-        document.getElementById('exam-content').innerHTML = html;
-    }
-
-    function startExamReal() { switchScreen('exam-screen', document.getElementById('zone-khao-thi')); startSectionNghe(); }
-    function startSectionNghe() { currentSection = 'nghe'; document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'block'); document.getElementById('mainAudio').play(); document.getElementById('timer-display').innerText = "Phần Nghe đang phát..."; document.getElementById('mainAudio').onended = forceNextSection; }
-    function startSectionDoc() { currentSection = 'doc'; document.querySelectorAll('.sec-nghe').forEach(el => el.style.display = 'none'); document.querySelectorAll('.sec-doc').forEach(el => el.style.display = 'block'); startTimer(50 * 60, "Đọc: "); }
-    function startSectionVietDoc() { currentSection = 'viet-doc'; document.querySelectorAll('.sec-doc').forEach(el => el.style.display = 'none'); document.querySelectorAll('.sec-viet').forEach(el => el.style.display = 'block'); document.getElementById('viet-phase-1').style.display = 'block'; document.getElementById('viet-phase-2').style.display = 'none'; startTimer(10 * 60, "Ghi nhớ đề: "); }
-    function startSectionVietViet() { currentSection = 'viet-viet'; document.getElementById('viet-phase-1').style.display = 'none'; document.getElementById('viet-phase-2').style.display = 'block'; startTimer(35 * 60, "Viết bài: "); }
-    function startSectionRaSoat() { currentSection = 'rasoat'; switchScreen('review-screen', document.getElementById('zone-khao-thi')); buildReviewGrid(); startTimer(5 * 60, "Rà soát: "); }
-
-    function forceNextSection() {
-        clearInterval(timerInterval);
-        if (currentSection === 'nghe') { document.getElementById('mainAudio').pause(); startSectionDoc(); } 
-        else if (currentSection === 'doc') { startSectionVietDoc(); } 
-        else if (currentSection === 'viet-doc') { startSectionVietViet(); } 
-        else if (currentSection === 'viet-viet') { startSectionRaSoat(); } 
-        else if (currentSection === 'rasoat') { submitFinalExam(); }
-    }
-
-    function startTimer(seconds, prefix) {
-        timeRemaining = seconds; updateTimerUI(prefix);
-        timerInterval = setInterval(() => { timeRemaining--; updateTimerUI(prefix); if (timeRemaining <= 0) { clearInterval(timerInterval); forceNextSection(); } }, 1000);
-    }
-    function updateTimerUI(prefix) { 
-        let el = (currentSection === 'rasoat') ? document.getElementById('review-timer') : document.getElementById('timer-display');
-        let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0'), s = (timeRemaining % 60).toString().padStart(2, '0');
-        el.innerText = prefix + m + ":" + s;
-    }
-
-    function buildReviewGrid() {
-        let html = "";
-        for (let i = 1; i <= 100; i++) {
-            let checked = document.querySelector(`input[name="ans-${i}"]:checked`);
-            html += `<div class="grid-item ${checked ? 'ans-true' : 'ans-false'}" onclick="jumpToQuestion(${i})">${i}</div>`;
-        }
-        document.getElementById('review-grid').innerHTML = html;
-    }
-    function jumpToQuestion(stt) {
-        switchScreen('exam-screen', document.getElementById('zone-khao-thi'));
-        document.querySelectorAll('.sec-nghe, .sec-doc, .sec-viet').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.' + (stt <= 50 ? 'sec-nghe' : 'sec-doc')).forEach(el => el.style.display = 'block');
-        let qElement = document.getElementById('q-' + stt); if (qElement) qElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        document.getElementById('btn-back-review').style.display = 'block';
-    }
-    function backToReview() { document.getElementById('btn-back-review').style.display = 'none'; buildReviewGrid(); switchScreen('review-screen', document.getElementById('zone-khao-thi')); }
-
-    function submitFinalExam() {
-        clearInterval(timerInterval);
-        document.getElementById('review-screen').innerHTML = "<h2 style='text-align:center;'>Đang chấm điểm. Lão sư chờ một lát...</h2>";
-        let finalAnswers = {};
-        for(let i = 1; i <= 100; i++) { let ans = document.querySelector(`input[name="ans-${i}"]:checked`); finalAnswers[i] = ans ? ans.value : ""; }
-        
-        fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'submitExam', studentName: studentName || "Khách", examName: currentExamName, answers: finalAnswers, writingContent: document.getElementById('ans-101') ? document.getElementById('ans-101').value : "" }) })
-        .then(res => res.json())
-        .then(data => {
-            switchScreen('result-screen', document.getElementById('zone-khao-thi'));
-            document.getElementById('res-nghe').innerText = data.diemNghe; document.getElementById('res-nghe-sai').innerText = data.cauNgheSai;
-            document.getElementById('res-doc').innerText = data.diemDoc; document.getElementById('res-doc-sai').innerText = data.cauDocSai;
-        });
-    }
-
-    // ==========================================
-    // PHẦN 2: LOGIC TÀNG KINH CÁC (TỪ VỰNG)
-    // ==========================================
-    let vocabDatabase = [];
-    let savedBookmarks = JSON.parse(localStorage.getItem('cobi_bookmarks') || "[]");
-    
-    // Hệ thống thẻ bài
-    let currentDeck = [];
-    let currentCardIndex = 0;
-
-    function loadVocabData() {
-        fetch(VOCAB_TSV_URL)
-        .then(res => res.text())
-        .then(text => {
-            // Tách bằng \t vì đây là file TSV
-            let rows = text.split('\n');
-            vocabDatabase = [];
-            for (let i = 1; i < rows.length; i++) { // Bỏ dòng tiêu đề
-                if (!rows[i].trim()) continue;
-                let cols = rows[i].split('\t');
-                vocabDatabase.push({
-                    hanzi: (cols[0] || "").trim(),
-                    pinyin: (cols[1] || "").trim(),
-                    meaning: (cols[2] || "").trim(),
-                    example: (cols[3] || "").trim()
-                });
-            }
-            document.getElementById('vocab-status').innerText = `Đã lĩnh ngộ ${vocabDatabase.length} từ vựng HSK 6.`;
-        }).catch(err => {
-            document.getElementById('vocab-status').innerText = "Lỗi kết nối thư viện từ vựng!";
-        });
-    }
-
-    function backToVocabMenu() {
-        switchScreen('vocab-menu-screen', document.getElementById('zone-tang-kinh'));
-        document.getElementById('flashcard-ui').classList.remove('is-flipped');
-    }
-
-    // --- CHẾ ĐỘ THẺ BÀI ---
-    function startVocabMode(mode) {
-        if (vocabDatabase.length === 0) return alert("Từ vựng đang tải, vui lòng đợi 1 giây!");
-        
-        if (mode === 'all') {
-            currentDeck = [...vocabDatabase].sort(() => Math.random() - 0.5); // Trộn ngẫu nhiên
-        } else if (mode === 'hard') {
-            currentDeck = vocabDatabase.filter(w => savedBookmarks.includes(w.hanzi));
-            if (currentDeck.length === 0) return alert("Sổ tay của bạn hiện chưa có từ khó nào!");
-            currentDeck.sort(() => Math.random() - 0.5);
-        }
-        
-        currentCardIndex = 0;
-        showCard(currentCardIndex);
-        switchScreen('vocab-flashcard-screen', document.getElementById('zone-tang-kinh'));
-    }
-
-    function showCard(index) {
-        if (index >= currentDeck.length) {
-            alert("Chúc mừng! Bạn đã ôn xong bộ thẻ bài này.");
-            return backToVocabMenu();
-        }
-        let word = currentDeck[index];
-        document.getElementById('flashcard-ui').classList.remove('is-flipped');
-        
-        document.getElementById('fc-hanzi').innerText = word.hanzi;
-        document.getElementById('fc-pinyin').innerText = word.pinyin;
-        document.getElementById('fc-meaning').innerText = word.meaning;
-        document.getElementById('fc-example').innerText = word.example || "Chưa có ví dụ.";
-        
-        // Trạng thái Bookmark
-        let bmBtn = document.getElementById('btn-bookmark');
-        if (savedBookmarks.includes(word.hanzi)) bmBtn.classList.add('bookmarked');
-        else bmBtn.classList.remove('bookmarked');
-
-        document.getElementById('fc-progress').innerText = `${index + 1} / ${currentDeck.length}`;
-    }
-
-    function flipCard() { document.getElementById('flashcard-ui').classList.toggle('is-flipped'); }
-
-    function toggleBookmark(e) {
-        e.stopPropagation(); // Ngăn lật thẻ
-        let word = currentDeck[currentCardIndex].hanzi;
-        let idx = savedBookmarks.indexOf(word);
-        if (idx === -1) savedBookmarks.push(word);
-        else savedBookmarks.splice(idx, 1);
-        
-        localStorage.setItem('cobi_bookmarks', JSON.stringify(savedBookmarks));
-        document.getElementById('btn-bookmark').classList.toggle('bookmarked');
-    }
-
-    function playAudio(e) {
-        e.stopPropagation();
-        let word = currentDeck[currentCardIndex].hanzi;
-        let utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = 'zh-CN';
-        window.speechSynthesis.speak(utterance);
-    }
-
-    function nextCard(isKnown) {
-        if (!isKnown) {
-            // Nếu chưa thuộc, nhét lại thẻ này vào vị trí cách hiện tại 3 thẻ (hoặc nhét cuối nếu sắp hết)
-            let currentCard = currentDeck[currentCardIndex];
-            let insertPos = Math.min(currentCardIndex + 4, currentDeck.length);
-            currentDeck.splice(insertPos, 0, currentCard);
-        }
-        currentCardIndex++;
-        showCard(currentCardIndex);
-    }
-
-    // --- CHẾ ĐỘ TRẮC NGHIỆM ĐIỀN TỪ ---
-    let quizScore = 0;
-    
-    function startVocabQuiz() {
-        if (vocabDatabase.length === 0) return alert("Từ vựng đang tải, vui lòng đợi!");
-        
-        // Lọc những từ CÓ VÍ DỤ và ví dụ CÓ CHỨA TỪ ĐÓ
-        let validWords = vocabDatabase.filter(w => w.example && w.example.includes(w.hanzi));
-        if (validWords.length < 10) return alert("Cần ít nhất 10 từ vựng có câu ví dụ chứa từ đó để tạo đề!");
-
-        // Bốc ngẫu nhiên 10 từ làm câu hỏi
-        let shuffled = [...validWords].sort(() => Math.random() - 0.5);
-        let quizPool = shuffled.slice(0, 10);
-        
-        let html = "";
-        quizPool.forEach((qWord, idx) => {
-            let sttNum = idx + 1;
-            // Đục lỗ câu ví dụ
-            let qText = qWord.example.replace(new RegExp(qWord.hanzi, 'g'), '<b> [ ___ ] </b>');
-            
-            // Tạo 4 đáp án (1 đúng, 3 nhiễu ngẫu nhiên)
-            let options = [qWord.hanzi];
-            while (options.length < 4) {
-                let randomWord = vocabDatabase[Math.floor(Math.random() * vocabDatabase.length)].hanzi;
-                if (!options.includes(randomWord)) options.push(randomWord);
-            }
-            options.sort(() => Math.random() - 0.5); // Đảo vị trí ABCD
-            
-            html += `<div class="question-box" id="vq-${sttNum}" data-ans="${qWord.hanzi}">`;
-            html += `<b>Câu ${sttNum}:</b> ${qText}<br><br>`;
-            let labels = ['A', 'B', 'C', 'D'];
-            options.forEach((optText, i) => {
-                html += `<div class="options"><label><input type="radio" name="vq-ans-${sttNum}" value="${optText}"> ${labels[i]}. ${optText}</label></div>`;
-            });
-            html += `</div>`;
-        });
-        
-        html += `<div style="text-align:center;"><button class="btn" onclick="submitVocabQuiz()">Nộp bài thi</button></div>`;
-        document.getElementById('quiz-content').innerHTML = html;
-        document.getElementById('quiz-result-area').style.display = 'none';
-        switchScreen('vocab-quiz-screen', document.getElementById('zone-tang-kinh'));
-    }
-
-    function submitVocabQuiz() {
-        quizScore = 0;
-        for (let i = 1; i <= 10; i++) {
-            let qBox = document.getElementById(`vq-${i}`);
-            let correctAns = qBox.getAttribute('data-ans');
-            let userAnsEl = document.querySelector(`input[name="vq-ans-${i}"]:checked`);
-            
-            // Đánh dấu đúng sai trên giao diện
-            if (userAnsEl && userAnsEl.value === correctAns) {
-                quizScore++;
-                qBox.style.backgroundColor = 'rgba(143, 151, 121, 0.3)'; // Xanh nhạt
-            } else {
-                qBox.style.backgroundColor = 'rgba(226, 194, 179, 0.3)'; // Đỏ nhạt
-                let reveal = document.createElement('div');
-                reveal.innerHTML = `<b style="color:var(--primary-color)">Đáp án đúng: ${correctAns}</b>`;
-                qBox.appendChild(reveal);
-            }
-            
-            // Vô hiệu hóa radio
-            document.querySelectorAll(`input[name="vq-ans-${i}"]`).forEach(radio => radio.disabled = true);
-        }
-        
-        document.getElementById('quiz-score').innerText = quizScore;
-        document.getElementById('quiz-result-area').style.display = 'block';
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
-</script>
-</body>
-</html>
+const SEC={L:{n:1,m:30,l:'Nghe'},R:{n:41,m:40,l:'Đọc'},W:{m:45,l:'Viết'}};
+function mock(){M.innerHTML=`<div class=card>Đề: <select id=me>${E.map((e,i)=>`<option value=${i}>${esc(e.name)}</option>`).join('')}</select><div style="margin:8px 0">${Object.keys(SEC).map(k=>`<button data-k=${k}>${SEC[k].l} (${SEC[k].m}’)</button>`).join(' ')}</div><div class=mu>Điểm là ước tính theo tỉ lệ đúng; cách quy đổi chính thức chưa được công bố. Mỗi phần cần ≥60.</div></div>`;
+M.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>run(E[$('#me').value],b.dataset.k))}
+function run(e,k){const s=SEC[k];let t=s.m*60,d=0,body;
+const tick=()=>{$('#tm').textContent=String(t/60|0).padStart(2,'0')+':'+String(t%60).padStart(2,'0');if(t--<=0)fin()};
+if(k=='W')body='<textarea id=wr rows=14 placeholder="Câu 81 (≥150 chữ) và câu 82 (≥300 chữ)"></textarea><div id=cnt class=mu></div><button id=cp>Sao chép để nhờ Claude chấm</button>';
+else body=(k=='L'?`<audio controls src="audio/${e.id}.mp3" style="width:100%"></audio><div class=mu>Nếu chưa có file trong thư mục audio/, chọn từ máy: <input type=file accept="audio/*" id=af></div>`:'')+[...e.ans[k]].map((_,i)=>{const n=s.n+i,c=k=='R'&&n>50&&n<61?6:4;return`<span style="display:inline-block;margin:3px">${n}.<select data-n=${n}><option>-</option>${L6.slice(0,c).split('').map(x=>`<option>${x}</option>`).join('')}</select></span>`}).join('');
+M.innerHTML=`<div class=card><b id=tm></b> <button id=fn class=p>Nộp</button></div><div class=card>${body}</div><div id=rs></div>`;
+if(k=='W'){$('#wr').oninput=x=>$('#cnt').textContent=(x.target.value.match(/[\u4e00-\u9fff]/g)||[]).length+' chữ';$('#cp').onclick=()=>{navigator.clipboard.writeText('Hãy chấm bài viết HSK6 này:\n'+$('#wr').value);toast('Đã sao chép')}}
+if($('#af'))$('#af').onchange=x=>$('audio').src=URL.createObjectURL(x.target.files[0]);
+function fin(){clearInterval(T);if(d++||k=='W')return;const a=e.ans[k];let c=0,w=[];
+[...a].forEach((x,i)=>{const n=s.n+i,v=M.querySelector(`select[data-n="${n}"]`).value;v==x?c++:w.push(`${n}: ${v} → ${x}`)});
+const p=Math.round(c/a.length*100);S.h.push({t:Date.now(),e:e.name,s:s.l,c,k:a.length,p});sv();
+$('#rs').innerHTML=`<div class=card><h3 class="${p<60?'no':'ok'}">${c}/${a.length} ≈ ${p}/100</h3>${p<60?'<div class=no>Dưới 60 — chưa đạt phần này.</div>':''}<div class=mu>Câu sai (bạn chọn → đáp án): ${w.join(' · ')||'không có'}</div></div>`}
+$('#fn').onclick=fin;T=setInterval(tick,1000);tick()}
+</script></body></html>
