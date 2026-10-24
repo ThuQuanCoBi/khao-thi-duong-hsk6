@@ -1,0 +1,22 @@
+{
+"传达":{"pos":"động từ","vi":"truyền đạt","coll":["传达信息","传达精神","传达指示"],"note":"Truyền đạt tin tức/tinh thần, không đi với 工程."},
+"启动":{"pos":"động từ","vi":"khởi động, bắt đầu","coll":["启动工程","启动项目","启动程序","启动仪式"],"conf":"≠ 调动 (điều động người, huy động tinh thần)","note":"ĐÚNG câu 41: 启动 + 工程 là cụm cố định, nghĩa là bắt đầu một việc lớn."},
+"调动":{"pos":"động từ","vi":"điều động, huy động","coll":["调动人员","调动积极性","调动资源"],"note":"Đối tượng là người, tính tích cực, nguồn lực; không đi với 工程."},
+"启示":{"pos":"danh từ","vi":"gợi mở, bài học rút ra","coll":["得到启示","给人启示","深受启示"],"note":"Thường là danh từ nên không đứng làm động từ trước 工程."},
+"实时":{"pos":"phó từ","vi":"theo thời gian thực, ngay lúc đó","coll":["实时监控","实时记录","实时更新"],"conf":"≠ 切实 (thiết thực)","note":"ĐÚNG câu 42: công nghệ ghi lại ngay lúc sự việc xảy ra."},
+"切实":{"pos":"phó từ/tính từ","vi":"thiết thực, thực sự","coll":["切实保障","切实可行","切实履行"],"note":"Đi với biện pháp, bảo đảm; không có nghĩa ‘ngay lúc đó’."},
+"瞬间":{"pos":"danh từ","vi":"khoảnh khắc","coll":["那一瞬间","瞬间爆发"],"note":"Chỉ thời điểm cực ngắn, không hợp với việc ghi lại liên tục quỹ đạo."},
+"按时":{"pos":"phó từ","vi":"đúng giờ, đúng hạn","coll":["按时完成","按时上班","按时吃药"],"note":"Nói về đúng thời gian quy định."},
+"特性":{"pos":"danh từ","vi":"đặc tính","coll":["物理特性","独特的特性"],"note":"Tính chất đặc trưng của sự vật."},
+"热线":{"pos":"danh từ","vi":"đường dây nóng","coll":["服务热线","拨打热线"],"note":"Dịch vụ điện thoại, không hợp ngữ cảnh."},
+"线索":{"pos":"danh từ","vi":"manh mối","coll":["提供线索","寻找线索","案件线索","违法线索"],"note":"ĐÚNG câu 43: danh từ làm tân ngữ của 发现."},
+"探索":{"pos":"động từ","vi":"tìm tòi, khám phá","coll":["探索未知","探索新路","勇于探索"],"conf":"≠ 探讨 (thảo luận sâu)","note":"Là động từ, không làm tân ngữ của 发现."},
+"打造":{"pos":"động từ","vi":"xây dựng, tạo dựng","coll":["打造品牌","打造精品","打造团队"],"conf":"≠ 改造 (cải tạo cái cũ)","note":"ĐÚNG câu 44: 打造品牌 = xây dựng thương hiệu."},
+"造型":{"pos":"danh từ","vi":"kiểu dáng, tạo hình","coll":["造型独特","发型造型"],"note":"Chỉ hình dáng bên ngoài, không đi với 品牌."},
+"改造":{"pos":"động từ","vi":"cải tạo","coll":["改造旧房","技术改造","思想改造"],"note":"Sửa cái cũ thành mới; thương hiệu thường dùng 打造."},
+"搭配":{"pos":"động từ/danh từ","vi":"phối hợp, kết hợp","coll":["合理搭配","搭配使用","色彩搭配"],"note":"Kết hợp theo tỉ lệ hoặc thói quen."},
+"探讨":{"pos":"động từ","vi":"thảo luận, nghiên cứu","coll":["探讨问题","深入探讨"],"note":"Bàn bạc, nghiên cứu một vấn đề."},
+"提取":{"pos":"động từ","vi":"chiết xuất, rút ra","coll":["提取成分","提取信息","提取现金"],"note":"Lấy một phần ra khỏi thứ gì đó."},
+"创办":{"pos":"động từ","vi":"sáng lập","coll":["创办企业","创办学校"],"note":"Thường đi với doanh nghiệp, trường học."},
+"维护":{"pos":"động từ","vi":"duy trì, bảo vệ","coll":["维护平衡","维护秩序","维护权益","维护安全"],"note":"ĐÚNG câu 45: 维护自然平衡 = giữ gìn cân bằng tự nhiên."}
+}
