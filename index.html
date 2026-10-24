@@ -37,6 +37,11 @@ function browse(p=0){const P=40,t=BQ.toLowerCase(),L=V.filter(x=>!t||x.w.include
 M.innerHTML=`<button id=bk>← Sổ tay</button> <input id=bs placeholder="Lọc (chữ / pinyin / nghĩa)" value="${esc(BQ)}"><div class=mu>${L.length} từ · trang ${p+1}/${N}</div>`+L.slice(p*P,p*P+P).map(x=>`<div class=card><b class=zh>${esc(x.w)}</b> ${esc(x.py)} · ${esc(x.vi)} <button data-w="${esc(x.w)}" ${S.n.some(n=>n.w==x.w)?'disabled':''}>＋</button></div>`).join('')+'<button id=pv>←</button> <button id=nxp>→</button>';
 $('#bk').onclick=notes;$('#bs').onchange=e=>{BQ=e.target.value;browse(0)};$('#pv').onclick=()=>browse(Math.max(p-1,0));$('#nxp').onclick=()=>browse(Math.min(p+1,N-1));
 M.querySelectorAll('button[data-w]').forEach(b=>b.onclick=()=>{add(b.dataset.w);b.disabled=true})}
+const selQ=q=>`<select data-n=${q.n}><option value="-">${q.n}</option>${q.o.map((o,j)=>`<option value=${L6[j]}>${L6[j]}. ${esc(o)}</option>`).join('')}</select>`;
+const passH=s=>esc(s.text).replace(/\{(\d+)\}/g,(m,n)=>selQ(s.qs.find(q=>q.n==n)))+s.qs.filter(q=>!s.text.includes('{'+q.n+'}')).map(q=>`<div>${q.n}. ${esc(q.p||'')} ${selQ(q)}</div>`).join('');
+const rdr=e=>e.sets.map(x=>`<div class="card zh"><b class=mu>${esc(x.title)}</b><br>${passH(x)}</div>`).join('')+'<div class=mu>Các câu chưa có chữ trong web: làm trên sách/PDF rồi chọn đáp án ở đây:</div>';
+function imp(){M.innerHTML=`<button id=bk>← Danh sách</button><div class=card><input id=ti placeholder="Tên bài" style="width:100%"><div class=mu>Đoạn văn (chỗ trống ghi {41}, {42}…; bài đọc hiểu thì để trống ô này)</div><textarea id=tx rows=6></textarea><div class=mu>Mỗi dòng một câu: số|câu hỏi (bỏ trống nếu điền từ)|A.xx B.xx C.xx D.xx|đáp án|ghi chú</div><textarea id=qq rows=6></textarea><button id=sv2 class=p>Lưu bài</button></div>`;
+$('#bk').onclick=read;$('#sv2').onclick=()=>{const qs=$('#qq').value.split('\n').filter(x=>x.trim()).map(l=>{const[n,p,o,a,w]=l.split('|').map(x=>x.trim());return{n:+n,p,o:o.split(/\s*[A-F][.．、]\s*/).slice(1),a:L6.indexOf((a||'').toUpperCase()),why:w||''}});S.cs=S.cs||[];S.cs.push({title:$('#ti').value||'Bài nhập',text:$('#tx').value,qs});sv();toast('Đã lưu');read()}}
 function home(){const d=S.exam?Math.ceil((new Date(S.exam)-Date.now())/DAY):null;
 M.innerHTML=`<div class=card><b>Ngày thi</b> <input type=date id=ed value="${S.exam||''}"> ${d!=null?`<b>còn ${d} ngày</b>`:''}</div>
 <div class=card>📒 Sổ tay: <b>${S.n.length}</b> từ · cần ôn hôm nay: <b>${due().length}</b> · Kho từ: ${V.length} ${V.length?'':'<b class=no>(trống — kiểm tra file data/vocab.json)</b>'}</div>
@@ -46,17 +51,17 @@ $('#ed').onchange=e=>{S.exam=e.target.value;sv();home()};
 $('#ex').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)]));a.download='hsk6-backup.json';a.click()};
 $('#im').onchange=async e=>{try{const j=JSON.parse(await e.target.files[0].text());if(!Array.isArray(j.n))throw 0;S=j;sv();home()}catch(x){alert('File không hợp lệ')}}}
 
-function read(){const L=E.flatMap(e=>e.sets.map(s=>({...s,e:e.name})));
-M.innerHTML=L.map((s,i)=>`<div class=card><b>${esc(s.e)}</b> · ${esc(s.title)} <button data-i=${i}>Làm</button></div>`).join('')||'Chưa có bài.';
-M.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>doSet(L[b.dataset.i]))}
+function read(){const L=E.flatMap(e=>e.sets.map(s=>({...s,e:e.name}))).concat((S.cs||[]).map(s=>({...s,e:'Bộ của tôi'})));
+M.innerHTML='<button id=im2>＋ Nhập bài từ văn bản</button>'+L.map((s,i)=>`<div class=card><b>${esc(s.e)}</b> · ${esc(s.title)} <button data-i=${i}>Làm</button></div>`).join('')||'Chưa có bài.';
+M.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>doSet(L[b.dataset.i]));$('#im2').onclick=imp}
 function doSet(s){const full=s.text.replace(/\{(\d+)\}/g,(m,n)=>{const q=s.qs.find(q=>q.n==n);return q.o[q.a]});
-const sel=q=>`<select data-n=${q.n}><option value=-1>${q.n}</option>${q.o.map((o,j)=>`<option value=${j}>${L6[j]}. ${esc(o)}</option>`).join('')}</select>`;
+const sel=selQ;
 const html=esc(s.text).replace(/\{(\d+)\}/g,(m,n)=>sel(s.qs.find(q=>q.n==n)));
 const rest=s.qs.filter(q=>!s.text.includes('{'+q.n+'}')).map(q=>`<div class=card>${q.n}. ${esc(q.p||'')} ${sel(q)}</div>`).join('');
 M.innerHTML=`<button id=bk>← Danh sách</button><div class="card mu">Cách làm: ① xác định từ loại cần điền (động/danh/tính/phó) ② nhìn từ đi liền trước và sau chỗ trống ③ loại các từ sai nghĩa hoặc sai từ loại. <label><input type=checkbox id=hn> Hiện gợi ý</label><div id=hs style="display:none">${s.qs.map(q=>q.n+'. '+esc(q.hint||'—')).join('<br>')}</div></div><div class="card zh" id=ps>${html}</div>${rest}<button id=sb class=p style="display:none;position:sticky;bottom:8px"></button> <button id=sm class=p>Nộp bài</button><div id=rs></div>`;
 $('#bk').onclick=read;$('#hn').onchange=e=>$('#hs').style.display=e.target.checked?'':'none';
 document.onselectionchange=()=>{const g=getSelection(),t=g.toString().trim(),b=$('#sb');if(b&&t&&t.length<=12&&g.anchorNode&&$('#ps').contains(g.anchorNode)){b.style.display='';b.textContent='＋ Thêm “'+t+'” vào sổ tay';b.onclick=()=>add(t,full,s.title)}};
-$('#sm').onclick=()=>{let c=0,h='';s.qs.forEach(q=>{const el=M.querySelector(`select[data-n="${q.n}"]`),ok=+el.value==q.a;c+=ok;el.style.outline='2px solid '+(ok?'#2a8a4a':'#c0392b');
+$('#sm').onclick=()=>{let c=0,h='';s.qs.forEach(q=>{const el=M.querySelector(`select[data-n="${q.n}"]`),ok=el.value==L6[q.a];c+=ok;el.style.outline='2px solid '+(ok?'#2a8a4a':'#c0392b');
 h+=`<div class=card><b class=${ok?'ok':'no'}>${q.n}. ${ok?'✓':'✗ đáp án '+L6[q.a]}</b> ${esc(q.why||'')}${q.o.filter(o=>o.length<=6).map(o=>lesson(o,o==q.o[q.a])).join('')}</div>`});
 $('#rs').innerHTML=`<h3>${c}/${s.qs.length}</h3><div class=mu>Mỗi từ dưới đây có nghĩa, các từ hay đi cùng và lý do đúng/sai. Chạm “＋ sổ tay” để lưu.</div>`+h;
 $('#rs').querySelectorAll('.chip').forEach(x=>x.onclick=()=>{add(x.dataset.w,full,s.title);x.style.opacity=.4})}}
@@ -85,10 +90,10 @@ Q.length?nx():(M.innerHTML='<div class=card>Hôm nay không có từ cần ôn �
 const SEC={L:{n:1,m:30,l:'Nghe'},R:{n:41,m:40,l:'Đọc'},W:{m:45,l:'Viết'}};
 function mock(){M.innerHTML=`<div class=card>Đề: <select id=me>${E.map((e,i)=>`<option value=${i}>${esc(e.name)}</option>`).join('')}</select><div style="margin:8px 0">${Object.keys(SEC).map(k=>`<button data-k=${k}>${SEC[k].l} (${SEC[k].m}’)</button>`).join(' ')}</div><div class=mu>Điểm là ước tính theo tỉ lệ đúng; cách quy đổi chính thức chưa được công bố. Mỗi phần cần ≥60.</div></div>`;
 M.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>run(E[$('#me').value],b.dataset.k))}
-function run(e,k){const s=SEC[k];let t=s.m*60,d=0,body;
+function run(e,k){const s=SEC[k];let t=s.m*60,d=0,body;const cov=new Set(k=='R'?e.sets.flatMap(x=>x.qs.map(q=>q.n)):[]);
 const tick=()=>{$('#tm').textContent=String(t/60|0).padStart(2,'0')+':'+String(t%60).padStart(2,'0');if(t--<=0)fin()};
-if(k=='W')body='<textarea id=wr rows=14 placeholder="Câu 81 (≥150 chữ) và câu 82 (≥300 chữ)"></textarea><div id=cnt class=mu></div><button id=cp>Sao chép để nhờ Claude chấm</button>';
-else body=(k=='L'?`<audio controls src="audio/${e.id}.mp3" style="width:100%"></audio><div class=mu>Nếu chưa có file trong thư mục audio/, chọn từ máy: <input type=file accept="audio/*" id=af></div>`:'')+[...e.ans[k]].map((_,i)=>{const n=s.n+i,c=k=='R'&&n>50&&n<61?6:4;return`<span style="display:inline-block;margin:3px">${n}.<select data-n=${n}><option>-</option>${L6.slice(0,c).split('').map(x=>`<option>${x}</option>`).join('')}</select></span>`}).join('');
+if(k=='W')body=`<div class=zh>81. ${esc(e.w81||'')}</div><div class=zh>82. ${esc(e.w82||'')}</div>`+'<textarea id=wr rows=14 placeholder="Câu 81 (≥150 chữ) và câu 82 (≥300 chữ)"></textarea><div id=cnt class=mu></div><button id=cp>Sao chép để nhờ Claude chấm</button>';
+else body=(k=='R'?rdr(e):'')+(k=='L'?`<audio controls src="audio/${e.id}.mp3" style="width:100%"></audio><div class=mu>Nếu chưa có file trong thư mục audio/, chọn từ máy: <input type=file accept="audio/*" id=af></div>`:'')+[...e.ans[k]].map((_,i)=>{const n=s.n+i,c=k=='R'&&n>50&&n<61?6:4;if(cov.has(n))return'';return`<span style="display:inline-block;margin:3px">${n}.<select data-n=${n}><option>-</option>${L6.slice(0,c).split('').map(x=>`<option>${x}</option>`).join('')}</select></span>`}).join('');
 M.innerHTML=`<div class=card><b id=tm></b> <button id=fn class=p>Nộp</button></div><div class=card>${body}</div><div id=rs></div>`;
 if(k=='W'){$('#wr').oninput=x=>$('#cnt').textContent=(x.target.value.match(/[\u4e00-\u9fff]/g)||[]).length+' chữ';$('#cp').onclick=()=>{navigator.clipboard.writeText('Hãy chấm bài viết HSK6 này:\n'+$('#wr').value);toast('Đã sao chép')}}
 if($('#af'))$('#af').onchange=x=>$('audio').src=URL.createObjectURL(x.target.files[0]);
